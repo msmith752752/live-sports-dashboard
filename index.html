@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NBA Live Companion</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(circle at top, #1a1a1a, #000000);
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .header {
+      position: absolute;
+      top: 24px;
+      left: 32px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #00ffcc;
+      letter-spacing: 1px;
+    }
+
+    .tagline {
+      position: absolute;
+      top: 58px;
+      left: 32px;
+      font-size: 16px;
+      color: #aaa;
+    }
+
+    .game-card {
+      width: 1050px;
+      border-radius: 28px;
+      padding: 36px;
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 45px rgba(0, 255, 204, 0.12);
+      text-align: center;
+      border: 2px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .game {
+      font-size: 42px;
+      margin-bottom: 22px;
+      color: #ddd;
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 18px;
+    }
+
+    .team-box {
+      width: 320px;
+      border-radius: 20px;
+      padding: 22px;
+      font-size: 34px;
+      font-weight: bold;
+    }
+
+    .team-score {
+      font-size: 76px;
+      margin-top: 8px;
+    }
+
+    .versus {
+      font-size: 32px;
+      color: #aaa;
+      font-weight: bold;
+    }
+
+    .clock {
+      font-size: 34px;
+      color: #00ffcc;
+      margin: 18px 0;
+    }
+
+    .insight {
+      font-size: 28px;
+      margin-top: 18px;
+      color: #fff;
+    }
+
+    .sub {
+      font-size: 22px;
+      color: #bbb;
+      margin-top: 8px;
+    }
+
+    .betting-panel {
+      margin-top: 26px;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    .bet-box {
+      width: 250px;
+      border-radius: 16px;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .bet-label {
+      font-size: 16px;
+      color: #999;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .bet-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .ticker {
+      position: absolute;
+      bottom: 54px;
+      width: 100%;
+      text-align: center;
+      font-size: 18px;
+      color: #aaa;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="header">201 HOLDINGS LIVE</div>
+<div class="tagline">NBA Playoff Companion Stream</div>
+
+<div class="game-card">
+  <div class="game" id="game">Loading game...</div>
+
+  <div class="score-row">
+    <div class="team-box" id="teamABox">
+      <div id="teamAName">DET</div>
+      <div class="team-score" id="teamAScore">0</div>
+    </div>
+
+    <div class="versus">VS</div>
+
+    <div class="team-box" id="teamBBox">
+      <div id="teamBName">ORL</div>
+      <div class="team-score" id="teamBScore">0</div>
+    </div>
+  </div>
+
+  <div class="clock" id="clock">Loading status...</div>
+
+  <div class="insight" id="insight">Loading insight...</div>
+  <div class="sub" id="sub">Waiting for live game data</div>
+
+  <div class="betting-panel">
+    <div class="bet-box">
+      <div class="bet-label">Spread</div>
+      <div class="bet-value" id="spread">Loading</div>
+    </div>
+
+    <div class="bet-box">
+      <div class="bet-label">Total</div>
+      <div class="bet-value" id="total">Loading</div>
+    </div>
+
+    <div class="bet-box">
+      <div class="bet-label">Moneyline</div>
+      <div class="bet-value" id="moneyline">Loading</div>
+    </div>
+  </div>
+</div>
+
+<div class="ticker" id="ticker">
+  Auto-updating scoreboard every 15 seconds
+</div>
+
+<div class="footer">
+  No copyrighted video/audio • Odds for informational purposes only • No betting advice
+</div>
+
+<script>
+  const TEAM_A = "DET";
+  const TEAM_B = "ORL";
+  const GAME_DATE = "20260427";
+  const REFRESH_MS = 15000;
+
+  const TEAM_COLORS = {
+    DET: { primary: "#C8102E", secondary: "#1D42BA" },
+    ORL: { primary: "#0077C0", secondary: "#C4CED4" },
+    BOS: { primary: "#007A33", secondary: "#BA9653" },
+    PHI: { primary: "#006BB6", secondary: "#ED174C" },
+    CLE: { primary: "#860038", secondary: "#FDBB30" },
+    TOR: { primary: "#CE1141", secondary: "#000000" },
+    NYK: { primary: "#006BB6", secondary: "#F58426" },
+    LAL: { primary: "#552583", secondary: "#FDB927" },
+    DEN: { primary: "#0E2240", secondary: "#FEC524" },
+    MIN: { primary: "#0C2340", secondary: "#78BE20" },
+    OKC: { primary: "#007AC1", secondary: "#EF3B24" },
+    PHX: { primary: "#1D1160", secondary: "#E56020" }
+  };
+
+  function setTeamColors() {
+    const a = TEAM_COLORS[TEAM_A] || { primary: "#333", secondary: "#777" };
+    const b = TEAM_COLORS[TEAM_B] || { primary: "#333", secondary: "#777" };
+
+    document.getElementById("teamABox").style.background =
+      `linear-gradient(135deg, ${a.primary}, ${a.secondary})`;
+
+    document.getElementById("teamBBox").style.background =
+      `linear-gradient(135deg, ${b.primary}, ${b.secondary})`;
+  }
+
+  function updateBettingPanelPlaceholder() {
+    document.getElementById("spread").innerText = "Pre-game only";
+    document.getElementById("total").innerText = "Pre-game only";
+    document.getElementById("moneyline").innerText = "Pre-game only";
+  }
+
+  async function updateGame() {
+    try {
+      const res = await fetch(
+        `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${GAME_DATE}`
+      );
+
+      const data = await res.json();
+
+      const game = data.events.find(e => {
+        const teams = e.competitions[0].competitors.map(c => c.team.abbreviation);
+        return teams.includes(TEAM_A) && teams.includes(TEAM_B);
+      });
+
+      if (!game) {
+        document.getElementById("game").innerText = `${TEAM_A} vs ${TEAM_B}`;
+        document.getElementById("clock").innerText = "Pregame — 8:00 PM ET";
+        document.getElementById("insight").innerText = "Waiting for game data";
+        document.getElementById("sub").innerText = "Scoreboard will update automatically";
+        return;
+      }
+
+      const comp = game.competitions[0].competitors;
+
+      const A = comp.find(c => c.team.abbreviation === TEAM_A);
+      const B = comp.find(c => c.team.abbreviation === TEAM_B);
+
+      const scoreA = parseInt(A.score || 0);
+      const scoreB = parseInt(B.score || 0);
+
+      const period = game.status.period;
+      const clock = game.status.displayClock || "";
+      const state = game.status.type.description || "Scheduled";
+
+      document.getElementById("game").innerText = `${TEAM_A} vs ${TEAM_B}`;
+      document.getElementById("teamAName").innerText = TEAM_A;
+      document.getElementById("teamBName").innerText = TEAM_B;
+      document.getElementById("teamAScore").innerText = scoreA;
+      document.getElementById("teamBScore").innerText = scoreB;
+
+      let clockText = state;
+
+      if (period && clock) {
+        clockText = `Q${period} — ${clock}`;
+      } else if (state.toLowerCase().includes("scheduled")) {
+        clockText = "Pregame — 8:00 PM ET";
+      }
+
+      document.getElementById("clock").innerText = clockText;
+
+      const diff = Math.abs(scoreA - scoreB);
+      const leader = scoreA > scoreB ? TEAM_A : TEAM_B;
+
+      let insight = "";
+      let sub = "";
+
+      if (scoreA === scoreB) {
+        insight = "🧠 Game tied";
+        sub = "Both teams are level — momentum is up for grabs";
+      } else if (diff <= 5 && period >= 4) {
+        insight = "🧠 Clutch game";
+        sub = `${leader} leads by ${diff} — late game pressure building`;
+      } else if (diff <= 5) {
+        insight = "🧠 Tight game";
+        sub = `${leader} leads by ${diff}`;
+      } else if (diff >= 15) {
+        insight = "🚨 Blowout developing";
+        sub = `${leader} controlling the game`;
+      } else {
+        insight = "📈 Competitive game";
+        sub = `${leader} leads by ${diff}`;
+      }
+
+      document.getElementById("insight").innerText = insight;
+      document.getElementById("sub").innerText = sub;
+
+      document.getElementById("ticker").innerText =
+        `Auto-updated • Last refresh: ${new Date().toLocaleTimeString()}`;
+
+    } catch (e) {
+      document.getElementById("insight").innerText = "Updating...";
+      document.getElementById("sub").innerText = "Score feed temporarily unavailable";
+      document.getElementById("ticker").innerText =
+        `Connection issue • Last attempt: ${new Date().toLocaleTimeString()}`;
+    }
+  }
+
+  setTeamColors();
+  updateBettingPanelPlaceholder();
+  updateGame();
+  setInterval(updateGame, REFRESH_MS);
+</script>
+
+</body>
+</html>
