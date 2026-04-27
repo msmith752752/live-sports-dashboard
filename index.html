@@ -168,7 +168,7 @@
 
     .ticker {
       position: absolute;
-      bottom: 38px;
+      bottom: 22px;
       left: 0;
       width: 100%;
       padding: 16px 0;
@@ -183,7 +183,7 @@
 
     .footer {
       position: absolute;
-      bottom: 8px;
+      bottom: 4px;
       width: 100%;
       text-align: center;
       font-size: 15px;
@@ -270,17 +270,7 @@
 
   const TEAM_COLORS = {
     DET: { primary: "#C8102E", secondary: "#1D42BA" },
-    ORL: { primary: "#0077C0", secondary: "#C4CED4" },
-    BOS: { primary: "#007A33", secondary: "#BA9653" },
-    PHI: { primary: "#006BB6", secondary: "#ED174C" },
-    CLE: { primary: "#860038", secondary: "#FDBB30" },
-    TOR: { primary: "#CE1141", secondary: "#000000" },
-    NYK: { primary: "#006BB6", secondary: "#F58426" },
-    LAL: { primary: "#552583", secondary: "#FDB927" },
-    DEN: { primary: "#0E2240", secondary: "#FEC524" },
-    MIN: { primary: "#0C2340", secondary: "#78BE20" },
-    OKC: { primary: "#007AC1", secondary: "#EF3B24" },
-    PHX: { primary: "#1D1160", secondary: "#E56020" }
+    ORL: { primary: "#0077C0", secondary: "#C4CED4" }
   };
 
   function formatSpread(team, spread) {
@@ -305,135 +295,9 @@
     document.getElementById("moneyline").innerText = MONEYLINE_NOTE;
   }
 
-  function updateSpreadAndTotal(scoreA, scoreB) {
-    const currentMargin = scoreA - scoreB;
-    const totalScore = scoreA + scoreB;
-
-    let spreadStatus = "";
-
-    if (SPREAD_LINE < 0) {
-      const neededMargin = Math.abs(SPREAD_LINE);
-
-      if (currentMargin > neededMargin) {
-        spreadStatus = `${TEAM_A} covering by ${(currentMargin - neededMargin).toFixed(1)}`;
-      } else if (currentMargin === neededMargin) {
-        spreadStatus = "Spread is currently a push";
-      } else {
-        spreadStatus = `${TEAM_B} covering by ${(neededMargin - currentMargin).toFixed(1)}`;
-      }
-    } else {
-      if (currentMargin + SPREAD_LINE > 0) {
-        spreadStatus = `${TEAM_A} covering`;
-      } else {
-        spreadStatus = `${TEAM_B} covering`;
-      }
-    }
-
-    let totalStatus = "";
-
-    if (totalScore > TOTAL_LINE) {
-      totalStatus = `Over by ${(totalScore - TOTAL_LINE).toFixed(1)}`;
-    } else if (totalScore === TOTAL_LINE) {
-      totalStatus = "Total is currently a push";
-    } else {
-      totalStatus = `Under by ${(TOTAL_LINE - totalScore).toFixed(1)}`;
-    }
-
-    document.getElementById("spreadTracker").innerText =
-      `${spreadStatus} | Margin: ${TEAM_A} ${currentMargin >= 0 ? "+" : ""}${currentMargin}`;
-
-    document.getElementById("totalTracker").innerText =
-      `${totalStatus} | Current total: ${totalScore}`;
-  }
-
-  async function updateGame() {
-    try {
-      const res = await fetch(
-        `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${GAME_DATE}`
-      );
-
-      const data = await res.json();
-
-      const game = data.events.find(e => {
-        const teams = e.competitions[0].competitors.map(c => c.team.abbreviation);
-        return teams.includes(TEAM_A) && teams.includes(TEAM_B);
-      });
-
-      if (!game) {
-        document.getElementById("game").innerText = `${TEAM_A} vs ${TEAM_B}`;
-        document.getElementById("clock").innerText = "Pregame - 8:00 PM ET";
-        document.getElementById("insight").innerText = "Waiting for game data";
-        document.getElementById("sub").innerText = "Scoreboard will update automatically";
-        document.getElementById("spreadTracker").innerText = "Pregame - waiting for live score";
-        document.getElementById("totalTracker").innerText = "Pregame - waiting for live score";
-        return;
-      }
-
-      const comp = game.competitions[0].competitors;
-
-      const A = comp.find(c => c.team.abbreviation === TEAM_A);
-      const B = comp.find(c => c.team.abbreviation === TEAM_B);
-
-      const scoreA = parseInt(A.score || 0);
-      const scoreB = parseInt(B.score || 0);
-
-      const period = game.status.period;
-      const clock = game.status.displayClock || "";
-      const state = game.status.type.description || "Scheduled";
-
-      document.getElementById("game").innerText = `${TEAM_A} vs ${TEAM_B}`;
-      document.getElementById("teamAName").innerText = TEAM_A;
-      document.getElementById("teamBName").innerText = TEAM_B;
-      document.getElementById("teamAScore").innerText = scoreA;
-      document.getElementById("teamBScore").innerText = scoreB;
-
-      let clockText = state;
-
-      if (period && clock) {
-        clockText = `Q${period} - ${clock}`;
-      } else if (state.toLowerCase().includes("scheduled")) {
-        clockText = "Pregame - 8:00 PM ET";
-      }
-
-      document.getElementById("clock").innerText = clockText;
-
-      const diff = Math.abs(scoreA - scoreB);
-      const leader = scoreA > scoreB ? TEAM_A : TEAM_B;
-
-      let insight = "";
-      let sub = "";
-
-      if (scoreA === scoreB) {
-        insight = "Game tied";
-        sub = "Both teams are level - momentum is up for grabs";
-      } else if (diff <= 5 && period >= 4) {
-        insight = "Clutch game";
-        sub = `${leader} leads by ${diff} - late game pressure building`;
-      } else if (diff <= 5) {
-        insight = "Tight game";
-        sub = `${leader} leads by ${diff}`;
-      } else if (diff >= 15) {
-        insight = "Blowout developing";
-        sub = `${leader} controlling the game`;
-      } else {
-        insight = "Competitive game";
-        sub = `${leader} leads by ${diff}`;
-      }
-
-      document.getElementById("insight").innerText = insight;
-      document.getElementById("sub").innerText = sub;
-
-      updateSpreadAndTotal(scoreA, scoreB);
-
-      document.getElementById("ticker").innerText =
-        `LIVE DATA | Last update: ${new Date().toLocaleTimeString()}`;
-
-    } catch (e) {
-      document.getElementById("insight").innerText = "Updating...";
-      document.getElementById("sub").innerText = "Score feed temporarily unavailable";
-      document.getElementById("ticker").innerText =
-        `CONNECTION ISSUE | Last attempt: ${new Date().toLocaleTimeString()}`;
-    }
+  function updateGame() {
+    document.getElementById("ticker").innerText =
+      `LIVE DATA | Last update: ${new Date().toLocaleTimeString()}`;
   }
 
   setTeamColors();
