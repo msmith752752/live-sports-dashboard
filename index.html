@@ -2,260 +2,459 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Sports Terminal</title>
 
   <style>
+    :root {
+      --panel: rgba(255, 255, 255, 0.055);
+      --border: rgba(255, 255, 255, 0.13);
+      --text: #ffffff;
+      --muted: #aeb4bd;
+      --terminal: #00ffcc;
+      --danger: #ff4d6d;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
       width: 100vw;
       height: 100vh;
-      background: radial-gradient(circle at top, #1a1a1a, #000000);
-      color: white;
-      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(0, 255, 204, 0.16), transparent 32%),
+        radial-gradient(circle at top right, rgba(0, 119, 192, 0.14), transparent 34%),
+        linear-gradient(180deg, #111419 0%, #050607 62%, #000 100%);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
       overflow: hidden;
     }
 
-    .header {
-      position: absolute;
-      top: 24px;
-      left: 42px;
+    .shell {
+      width: 100vw;
+      height: 100vh;
+      padding: 24px 34px 58px;
+      display: grid;
+      grid-template-rows: 72px 1fr 46px;
+      gap: 18px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      border-radius: 22px;
+      padding: 16px 22px;
+      background: rgba(0, 0, 0, 0.32);
+      border: 1px solid rgba(0, 255, 204, 0.18);
+      box-shadow: 0 0 46px rgba(0, 255, 204, 0.08);
+    }
+
+    .brand-title {
       font-size: 30px;
-      font-weight: bold;
-      color: #00ffcc;
-      letter-spacing: 1.5px;
+      font-weight: 900;
+      color: var(--terminal);
+      letter-spacing: 2px;
     }
 
-    .tagline {
-      position: absolute;
-      top: 62px;
-      left: 42px;
-      font-size: 18px;
-      color: #aaa;
+    .brand-subtitle {
+      font-size: 16px;
+      color: var(--muted);
+      letter-spacing: 0.5px;
     }
 
-    .separator {
-      position: absolute;
-      top: 94px;
-      left: 42px;
-      width: 390px;
-      height: 2px;
-      background: #00ffcc;
-      opacity: 0.35;
+    .top-status {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
-    .game-card {
-      position: absolute;
-      top: 110px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 1180px;
-      border-radius: 26px;
-      padding: 30px;
-      background: rgba(255, 255, 255, 0.055);
-      box-shadow: 0 0 60px rgba(0, 255, 204, 0.16);
+    .live-badge {
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: rgba(255, 0, 60, 0.16);
+      border: 1px solid rgba(255, 0, 60, 0.55);
+      color: var(--danger);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      min-width: 110px;
       text-align: center;
-      border: 2px solid rgba(255, 255, 255, 0.1);
     }
 
-    .game {
-      font-size: 42px;
-      margin-bottom: 18px;
-      color: #ddd;
+    .clock-pill {
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      min-width: 180px;
+      text-align: center;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 315px 1fr 315px;
+      gap: 18px;
+      min-height: 0;
+    }
+
+    .panel {
+      border-radius: 24px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: 0 0 42px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+    }
+
+    .side-panel {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .panel-title {
+      color: var(--terminal);
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+    }
+
+    .data-card {
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(0, 0, 0, 0.34);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+    }
+
+    .label {
+      font-size: 13px;
+      color: #8d96a3;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+
+    .value {
+      font-size: 24px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .subvalue {
+      margin-top: 7px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.25;
+    }
+
+    .score-panel {
+      padding: 22px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 18px;
+      background: rgba(255, 255, 255, 0.064);
+      border: 1px solid rgba(0, 255, 204, 0.2);
+      box-shadow: 0 0 64px rgba(0, 255, 204, 0.12);
+    }
+
+    .game-head { text-align: center; }
+
+    .game-title {
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .game-subtitle {
+      color: var(--muted);
+      font-size: 17px;
     }
 
     .score-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 26px;
-      margin-bottom: 16px;
+      display: grid;
+      grid-template-columns: 1fr 90px 1fr;
+      align-items: stretch;
+      gap: 16px;
     }
 
     .team-box {
-      width: 340px;
-      border-radius: 20px;
-      padding: 20px;
-      font-size: 34px;
-      font-weight: bold;
+      border-radius: 24px;
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 242px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: inset 0 0 38px rgba(0, 0, 0, 0.25);
+    }
+
+    .team-name {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+
+    .team-record {
+      margin-top: 8px;
+      font-size: 16px;
+      color: rgba(255,255,255,0.78);
+      font-weight: 700;
     }
 
     .team-score {
-      font-size: 78px;
-      margin-top: 6px;
+      font-size: 104px;
+      font-weight: 900;
+      line-height: 0.95;
+      margin-top: 14px;
+      text-shadow: 0 8px 28px rgba(0,0,0,0.4);
+      transition: transform 0.22s ease, text-shadow 0.22s ease;
+    }
+
+    .score-pulse {
+      transform: scale(1.12);
+      text-shadow: 0 0 30px rgba(0, 255, 204, 0.75);
     }
 
     .versus {
-      font-size: 34px;
-      color: #aaa;
-      font-weight: bold;
-    }
-
-    .clock {
-      font-size: 32px;
-      color: #00ffcc;
-      margin: 14px 0;
-    }
-
-    .insight {
-      font-size: 28px;
-      margin-top: 10px;
-      color: #fff;
-    }
-
-    .sub {
-      font-size: 20px;
-      color: #bbb;
-      margin-top: 6px;
-    }
-
-    .betting-panel {
-      margin-top: 20px;
       display: flex;
+      align-items: center;
       justify-content: center;
-      gap: 18px;
+      color: var(--muted);
+      font-size: 30px;
+      font-weight: 900;
     }
 
-    .bet-box {
-      width: 280px;
-      border-radius: 16px;
-      padding: 16px;
-      background: rgba(0, 0, 0, 0.42);
-      border: 1px solid rgba(255, 255, 255, 0.14);
+    .game-state-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
     }
 
-    .bet-label {
-      font-size: 15px;
-      color: #999;
-      margin-bottom: 8px;
-      text-transform: uppercase;
+    .state-card {
+      border-radius: 18px;
+      padding: 14px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.32);
+      border: 1px solid rgba(0, 255, 204, 0.16);
+    }
+
+    .state-label {
+      color: #8d96a3;
+      font-size: 12px;
       letter-spacing: 1px;
-    }
-
-    .bet-value {
-      font-size: 24px;
-      font-weight: bold;
-      color: #fff;
-    }
-
-    .spread-panel {
-      margin-top: 18px;
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-    }
-
-    .spread-box {
-      width: 440px;
-      border-radius: 16px;
-      padding: 16px;
-      background: rgba(0, 255, 204, 0.07);
-      border: 1px solid rgba(0, 255, 204, 0.22);
-    }
-
-    .spread-label {
-      font-size: 15px;
-      color: #999;
-      margin-bottom: 8px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      font-weight: 900;
+      margin-bottom: 8px;
     }
 
-    .spread-value {
-      font-size: 24px;
-      font-weight: bold;
+    .state-value {
       color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .stat-name {
+      grid-column: 1 / -1;
+      color: #8d96a3;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .stat-team {
+      border-radius: 12px;
+      padding: 10px 8px;
+      background: rgba(255,255,255,0.055);
+      text-align: center;
+    }
+
+    .stat-team-abbr {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 3px;
+      font-weight: 800;
+    }
+
+    .stat-team-value {
+      font-size: 21px;
+      font-weight: 900;
     }
 
     .ticker {
-      position: absolute;
-      bottom: 24px;
-      left: 0;
-      width: 100%;
-      padding: 10px 0;
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
-      color: #00ffcc;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--terminal);
       background: rgba(0, 255, 204, 0.08);
-      border-top: 1px solid rgba(0, 255, 204, 0.18);
-      border-bottom: 1px solid rgba(0, 255, 204, 0.18);
+      border: 1px solid rgba(0, 255, 204, 0.18);
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .ticker-track {
+      display: inline-block;
+      padding-left: 100%;
+      animation: scrollTicker 60s linear infinite;
+    }
+
+    @keyframes scrollTicker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
     }
 
     .footer {
       position: absolute;
-      bottom: 5px;
+      bottom: 8px;
       width: 100%;
       text-align: center;
-      font-size: 14px;
-      color: #777;
+      font-size: 13px;
+      color: #7c828d;
     }
   </style>
 </head>
 
 <body>
-
-<div class="header">THE SPORTS TERMINAL</div>
-<div class="tagline">Live NBA Dashboard</div>
-<div class="separator"></div>
-
-<div class="game-card">
-  <div class="game" id="game">Loading game...</div>
-
-  <div class="score-row">
-    <div class="team-box" id="teamABox">
-      <div id="teamAName">DET</div>
-      <div class="team-score" id="teamAScore">0</div>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-title">THE SPORTS TERMINAL</div>
+      <div class="brand-subtitle">Live NBA dashboard • scoreboard • spread • total • key stats • NBA/MLB ticker</div>
     </div>
-
-    <div class="versus">VS</div>
-
-    <div class="team-box" id="teamBBox">
-      <div id="teamBName">ORL</div>
-      <div class="team-score" id="teamBScore">0</div>
+    <div class="top-status">
+      <div class="clock-pill" id="lastUpdatedTop">Connecting...</div>
+      <div class="live-badge" id="liveBadge">LIVE</div>
     </div>
   </div>
 
-  <div class="clock" id="clock">Loading status...</div>
+  <div class="main-grid">
+    <div class="panel side-panel">
+      <div class="panel-title">Game Intelligence</div>
 
-  <div class="insight" id="insight">Loading insight...</div>
-  <div class="sub" id="sub">Waiting for live game data</div>
+      <div class="data-card">
+        <div class="label">Latest Play</div>
+        <div class="value" id="latestPlay" style="font-size: 20px;">Awaiting game action</div>
+        <div class="subvalue" id="latestPlaySub">Play-by-play appears when available</div>
+      </div>
 
-  <div class="betting-panel">
-    <div class="bet-box">
-      <div class="bet-label">Pregame Spread</div>
-      <div class="bet-value" id="spread">Loading</div>
+      <div class="data-card">
+        <div class="label">DET Top Performer</div>
+        <div class="value" id="teamALeader" style="font-size: 20px;">N/A</div>
+        <div class="subvalue" id="teamALeaderSub">Points leader updates during game</div>
+      </div>
+
+      <div class="data-card">
+        <div class="label">ORL Top Performer</div>
+        <div class="value" id="teamBLeader" style="font-size: 20px;">N/A</div>
+        <div class="subvalue" id="teamBLeaderSub">Points leader updates during game</div>
+      </div>
+
+      <div class="data-card">
+        <div class="label">Feed Status</div>
+        <div class="value" id="feedStatus">Initializing</div>
+        <div class="subvalue" id="feedSub">Waiting for scoreboard connection</div>
+      </div>
     </div>
 
-    <div class="bet-box">
-      <div class="bet-label">Pregame Total</div>
-      <div class="bet-value" id="total">Loading</div>
+    <div class="panel score-panel">
+      <div class="game-head">
+        <div class="game-title" id="game">DET vs ORL</div>
+        <div class="game-subtitle" id="gameSubtitle">Live scoreboard, spread tracker, total tracker, and key game updates</div>
+      </div>
+
+      <div class="score-row">
+        <div class="team-box" id="teamABox">
+          <div class="team-name" id="teamAName">DET</div>
+          <div class="team-record" id="teamARecord">Record: —</div>
+          <div class="team-score" id="teamAScore">0</div>
+        </div>
+
+        <div class="versus">VS</div>
+
+        <div class="team-box" id="teamBBox">
+          <div class="team-name" id="teamBName">ORL</div>
+          <div class="team-record" id="teamBRecord">Record: —</div>
+          <div class="team-score" id="teamBScore">0</div>
+        </div>
+      </div>
+
+      <div class="game-state-row">
+        <div class="state-card">
+          <div class="state-label">Game Clock</div>
+          <div class="state-value" id="clock">Connecting...</div>
+        </div>
+        <div class="state-card">
+          <div class="state-label">Current Total</div>
+          <div class="state-value" id="currentTotal">0</div>
+        </div>
+        <div class="state-card">
+          <div class="state-label">Margin</div>
+          <div class="state-value" id="margin">Even</div>
+        </div>
+      </div>
     </div>
 
-    <div class="bet-box">
-      <div class="bet-label">Moneyline</div>
-      <div class="bet-value" id="moneyline">Loading</div>
+    <div class="panel side-panel">
+      <div class="panel-title">Betting Snapshot</div>
+
+      <div class="data-card">
+        <div class="label">Spread</div>
+        <div class="value" id="spread">Loading</div>
+        <div class="subvalue" id="spreadSource">Pregame reference line</div>
+      </div>
+
+      <div class="data-card">
+        <div class="label">Spread Tracker</div>
+        <div class="value" id="spreadTracker">Awaiting Tip-Off</div>
+        <div class="subvalue" id="spreadTrackerSub">Calculated from current score</div>
+      </div>
+
+      <div class="data-card">
+        <div class="label">Total</div>
+        <div class="value" id="total">Loading</div>
+        <div class="subvalue" id="totalSource">Pregame reference total</div>
+      </div>
+
+      <div class="data-card">
+        <div class="label">Total Tracker</div>
+        <div class="value" id="totalTracker">Awaiting Tip-Off</div>
+        <div class="subvalue" id="totalTrackerSub">Calculated from current score</div>
+      </div>
+
+      <div class="data-card">
+        <div class="label">Line Movement</div>
+        <div class="value" id="lineMovement">Pregame line locked</div>
+        <div class="subvalue" id="lineMovementSub">Live odds movement requires an odds feed</div>
+      </div>
     </div>
   </div>
 
-  <div class="spread-panel">
-    <div class="spread-box">
-      <div class="spread-label">Spread Tracker</div>
-      <div class="spread-value" id="spreadTracker">Waiting for score</div>
-    </div>
-
-    <div class="spread-box">
-      <div class="spread-label">Total Tracker</div>
-      <div class="spread-value" id="totalTracker">Waiting for score</div>
-    </div>
+  <div class="ticker">
+    <div class="ticker-track" id="ticker">LIVE DATA | Dashboard initializing...</div>
   </div>
-</div>
-
-<div class="ticker" id="ticker">
-  LIVE DATA | Waiting for first update
 </div>
 
 <div class="footer">
-  No copyrighted video/audio | Odds for informational purposes only | No betting advice
+  No copyrighted video/audio | Odds for informational purposes only | No betting advice | Data refreshes automatically
 </div>
 
 <script>
@@ -264,47 +463,443 @@
   const GAME_DATE = "20260427";
   const REFRESH_MS = 15000;
 
-  const SPREAD_LINE = -4.5;
-  const TOTAL_LINE = 215.5;
-  const MONEYLINE_NOTE = "Pre-game only";
+  const DEFAULT_SPREAD_TEAM = "DET";
+  const DEFAULT_SPREAD_LINE = -4.5;
+  const DEFAULT_TOTAL_LINE = 214.5;
+
+  let activeSpreadTeam = DEFAULT_SPREAD_TEAM;
+  let activeSpreadLine = DEFAULT_SPREAD_LINE;
+  let activeTotalLine = DEFAULT_TOTAL_LINE;
+  let latestEventId = null;
+  let lastScoreA = null;
+  let lastScoreB = null;
+  let aroundLeagueText = "Around the NBA loading...";
+  let aroundMlbText = "Around MLB loading...";
+  let pregameMessageIndex = 0;
+
+  const pregameMessages = [
+    "Awaiting tip-off — live scoring begins automatically",
+    "NBA and MLB score ticker active",
+    "Spread and total trackers begin after tip-off",
+    "Latest play appears when play-by-play is available",
+    "No commentary — live information dashboard"
+  ];
+
+  const NBA_SCOREBOARD_URL =
+    `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${GAME_DATE}`;
+
+  const MLB_SCOREBOARD_URL =
+    `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard?dates=${GAME_DATE}`;
 
   const TEAM_COLORS = {
     DET: { primary: "#C8102E", secondary: "#1D42BA" },
     ORL: { primary: "#0077C0", secondary: "#C4CED4" }
   };
 
-  function formatSpread(team, spread) {
-    if (spread > 0) return `${team} +${spread}`;
-    return `${team} ${spread}`;
+  function getEl(id) {
+    return document.getElementById(id);
   }
 
-  function setTeamColors() {
-    const a = TEAM_COLORS[TEAM_A] || { primary: "#333", secondary: "#777" };
-    const b = TEAM_COLORS[TEAM_B] || { primary: "#333", secondary: "#777" };
+  function setText(id, text) {
+    const el = getEl(id);
+    if (el) el.innerText = text;
+  }
 
-    document.getElementById("teamABox").style.background =
+  function safeText(value, fallback = "N/A") {
+    if (value === undefined || value === null || value === "" || value === "—") return fallback;
+    return value;
+  }
+
+  function formatSpread(team, spread) {
+    const num = Number(spread);
+    if (Number.isNaN(num)) return "N/A";
+    if (num > 0) return `${team} +${num}`;
+    return `${team} ${num}`;
+  }
+
+  function pulseScore(id) {
+    const el = getEl(id);
+    if (!el) return;
+    el.classList.add("score-pulse");
+    setTimeout(() => el.classList.remove("score-pulse"), 350);
+  }
+
+  function rotatePregameMessage() {
+    const message = pregameMessages[pregameMessageIndex % pregameMessages.length];
+    pregameMessageIndex++;
+    setText("feedSub", message);
+  }
+
+  function setTeamColors(teamA, teamB) {
+    const a = TEAM_COLORS[teamA] || { primary: "#333", secondary: "#777" };
+    const b = TEAM_COLORS[teamB] || { primary: "#333", secondary: "#777" };
+
+    getEl("teamABox").style.background =
       `linear-gradient(135deg, ${a.primary}, ${a.secondary})`;
 
-    document.getElementById("teamBBox").style.background =
+    getEl("teamBBox").style.background =
       `linear-gradient(135deg, ${b.primary}, ${b.secondary})`;
   }
 
-  function updateBettingPanelPlaceholder() {
-    document.getElementById("spread").innerText = formatSpread(TEAM_A, SPREAD_LINE);
-    document.getElementById("total").innerText = TOTAL_LINE;
-    document.getElementById("moneyline").innerText = MONEYLINE_NOTE;
+  function setPregamePanel() {
+    setText("spread", formatSpread(activeSpreadTeam, activeSpreadLine));
+    setText("total", activeTotalLine);
   }
 
-  function updateGame() {
-    document.getElementById("ticker").innerText =
-      `LIVE DATA | Last update: ${new Date().toLocaleTimeString()}`;
+  function findTargetGame(events) {
+    return events.find(event => {
+      const competitors = event.competitions?.[0]?.competitors || [];
+      const abbreviations = competitors.map(c => c.team?.abbreviation);
+      return abbreviations.includes(TEAM_A) && abbreviations.includes(TEAM_B);
+    });
   }
 
-  setTeamColors();
-  updateBettingPanelPlaceholder();
+  function getCompetitor(game, teamAbbrev) {
+    const competitors = game.competitions?.[0]?.competitors || [];
+    return competitors.find(c => c.team?.abbreviation === teamAbbrev);
+  }
+
+  function getRecord(comp) {
+    const record = comp?.records?.find(r => r.type === "total") || comp?.records?.[0];
+    return record?.summary ? `Record: ${record.summary}` : "Record: N/A";
+  }
+
+  function getStatusText(status) {
+    const type = status?.type;
+    if (!type) return "Status unavailable";
+    return type.shortDetail || type.detail || "Status unavailable";
+  }
+
+  function getState(status) {
+    return status?.type?.state || "pre";
+  }
+
+  function updateOddsFromGame(game) {
+    const odds = game.competitions?.[0]?.odds?.[0];
+
+    if (!odds) {
+      setText("spreadSource", "Manual pregame reference line");
+      setText("totalSource", "Manual pregame reference total");
+      setText("lineMovement", "Pregame line locked");
+      setText("lineMovementSub", "Live odds movement requires an odds feed");
+      return;
+    }
+
+    if (typeof odds.overUnder === "number") {
+      activeTotalLine = odds.overUnder;
+      setText("totalSource", safeText(odds.provider?.name, "ESPN odds feed"));
+    }
+
+    if (odds.details) {
+      setText("spread", odds.details);
+      setText("spreadSource", safeText(odds.provider?.name, "ESPN odds feed"));
+    } else {
+      setText("spread", formatSpread(activeSpreadTeam, activeSpreadLine));
+    }
+
+    setText("total", activeTotalLine);
+    setText("lineMovement", "Odds feed connected");
+    setText("lineMovementSub", "Movement history not included in free scoreboard feed");
+  }
+
+  function updateSpreadTracker(scoreA, scoreB, state) {
+    if (state === "pre") {
+      setText("spreadTracker", "Awaiting Tip-Off");
+      setText("spreadTrackerSub", "Tracking begins when the game starts");
+      return;
+    }
+
+    const spreadTeamScore = activeSpreadTeam === TEAM_A ? scoreA : scoreB;
+    const otherScore = activeSpreadTeam === TEAM_A ? scoreB : scoreA;
+    const margin = spreadTeamScore - otherScore;
+    const coverMargin = margin + activeSpreadLine;
+
+    if (coverMargin > 0) {
+      setText("spreadTracker", `${activeSpreadTeam} covering`);
+      setText("spreadTrackerSub", `Cover margin: ${coverMargin.toFixed(1)}`);
+    } else if (coverMargin < 0) {
+      setText("spreadTracker", `${activeSpreadTeam} not covering`);
+      setText("spreadTrackerSub", `Miss margin: ${Math.abs(coverMargin).toFixed(1)}`);
+    } else {
+      setText("spreadTracker", "On the number");
+      setText("spreadTrackerSub", "Exactly on the spread");
+    }
+  }
+
+  function updateTotalTracker(scoreA, scoreB, state) {
+    const currentTotal = scoreA + scoreB;
+    setText("currentTotal", currentTotal);
+
+    if (state === "pre") {
+      setText("totalTracker", "Awaiting Tip-Off");
+      setText("totalTrackerSub", "Tracking begins when the game starts");
+      return;
+    }
+
+    const remaining = activeTotalLine - currentTotal;
+
+    if (remaining > 0) {
+      setText("totalTracker", `${currentTotal} scored`);
+      setText("totalTrackerSub", `${remaining.toFixed(1)} below total`);
+    } else if (remaining < 0) {
+      setText("totalTracker", `${currentTotal} scored`);
+      setText("totalTrackerSub", `${Math.abs(remaining).toFixed(1)} over total`);
+    } else {
+      setText("totalTracker", "Exactly on total");
+      setText("totalTrackerSub", "Current score equals total line");
+    }
+  }
+
+  function updateMargin(scoreA, scoreB) {
+    const diff = scoreA - scoreB;
+    if (diff > 0) setText("margin", `${TEAM_A} +${diff}`);
+    else if (diff < 0) setText("margin", `${TEAM_B} +${Math.abs(diff)}`);
+    else setText("margin", "Even");
+  }
+
+  function getLatestPlay(summary) {
+    const drives = summary.drives;
+    const plays = summary.plays;
+
+    if (Array.isArray(plays) && plays.length > 0) {
+      const last = plays[plays.length - 1];
+      return last.text || last.shortText || last.displayText || null;
+    }
+
+    if (drives?.current?.description) {
+      return drives.current.description;
+    }
+
+    return null;
+  }
+
+  function getAthletesFromBoxscore(summary, teamAbbr) {
+    const players = summary.boxscore?.players || [];
+    const teamBlock = players.find(p => p.team?.abbreviation === teamAbbr);
+    return teamBlock?.statistics || [];
+  }
+
+  function findPointsLeader(summary, teamAbbr) {
+    const statGroups = getAthletesFromBoxscore(summary, teamAbbr);
+    let best = null;
+
+    statGroups.forEach(group => {
+      const labels = group.labels || [];
+      const pointsIndex = labels.findIndex(label => String(label).toLowerCase() === "pts");
+
+      if (pointsIndex === -1) return;
+
+      const athletes = group.athletes || [];
+      athletes.forEach(item => {
+        const name = item.athlete?.shortName || item.athlete?.displayName;
+        const stats = item.stats || [];
+        const pts = parseInt(stats[pointsIndex] || "0", 10);
+
+        if (!name || Number.isNaN(pts)) return;
+        if (!best || pts > best.pts) best = { name, pts };
+      });
+    });
+
+    return best;
+  }
+
+  async function updateGameIntelligence(eventId) {
+    if (!eventId) return;
+
+    try {
+      const summaryUrl = `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${eventId}`;
+      const response = await fetch(summaryUrl, { cache: "no-store" });
+      if (!response.ok) throw new Error("Summary feed unavailable");
+
+      const summary = await response.json();
+
+      const play = getLatestPlay(summary);
+      if (play) {
+        setText("latestPlay", play);
+        setText("latestPlaySub", "Latest available play-by-play update");
+      } else {
+        setText("latestPlay", "Awaiting game action");
+        setText("latestPlaySub", "Play-by-play appears when available");
+      }
+
+      const leaderA = findPointsLeader(summary, TEAM_A);
+      const leaderB = findPointsLeader(summary, TEAM_B);
+
+      if (leaderA) {
+        setText("teamALeader", `${leaderA.name} — ${leaderA.pts} PTS`);
+        setText("teamALeaderSub", `${TEAM_A} scoring leader`);
+      } else {
+        setText("teamALeader", "N/A");
+        setText("teamALeaderSub", "Points leader updates during game");
+      }
+
+      if (leaderB) {
+        setText("teamBLeader", `${leaderB.name} — ${leaderB.pts} PTS`);
+        setText("teamBLeaderSub", `${TEAM_B} scoring leader`);
+      } else {
+        setText("teamBLeader", "N/A");
+        setText("teamBLeaderSub", "Points leader updates during game");
+      }
+    } catch (error) {
+      setText("latestPlay", "Awaiting game action");
+      setText("latestPlaySub", "Play-by-play feed not available yet");
+      setText("teamALeader", "N/A");
+      setText("teamBLeader", "N/A");
+    }
+  }
+
+  function buildGameLine(event) {
+    const comps = event.competitions?.[0]?.competitors || [];
+    if (comps.length < 2) return null;
+
+    const away = comps.find(c => c.homeAway === "away") || comps[0];
+    const home = comps.find(c => c.homeAway === "home") || comps[1];
+
+    const awayAbbr = away.team?.abbreviation || "AWAY";
+    const homeAbbr = home.team?.abbreviation || "HOME";
+    const awayScore = away.score || "0";
+    const homeScore = home.score || "0";
+    const status = getStatusText(event.status);
+    const state = getState(event.status);
+
+    if (state === "pre") return `${awayAbbr} at ${homeAbbr} • ${status}`;
+    return `${awayAbbr} ${awayScore} - ${homeAbbr} ${homeScore} • ${status}`;
+  }
+
+  async function updateAroundLeague() {
+    try {
+      const response = await fetch(NBA_SCOREBOARD_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error("Around league feed unavailable");
+
+      const data = await response.json();
+      const events = data.events || [];
+      const lines = events.map(buildGameLine).filter(Boolean);
+
+      aroundLeagueText = lines.length > 0
+        ? `AROUND THE NBA: ${lines.join("   •   ")}`
+        : "AROUND THE NBA: Schedule loading from scoreboard feed";
+    } catch (error) {
+      aroundLeagueText = "AROUND THE NBA: Score ticker temporarily unavailable";
+    }
+  }
+
+  async function updateAroundMlb() {
+    try {
+      const response = await fetch(MLB_SCOREBOARD_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error("MLB feed unavailable");
+
+      const data = await response.json();
+      const events = data.events || [];
+      const lines = events.map(buildGameLine).filter(Boolean).slice(0, 12);
+
+      aroundMlbText = lines.length > 0
+        ? `AROUND MLB: ${lines.join("   •   ")}`
+        : "AROUND MLB: Schedule loading from scoreboard feed";
+    } catch (error) {
+      aroundMlbText = "AROUND MLB: Score ticker temporarily unavailable";
+    }
+  }
+
+  function updateTicker(scoreA, scoreB, statusText, now) {
+    const mainLine = `LIVE | ${TEAM_A} ${scoreA} - ${TEAM_B} ${scoreB} | ${statusText} | Spread ${formatSpread(activeSpreadTeam, activeSpreadLine)} | Total ${activeTotalLine} | Updated ${now}`;
+    setText("ticker", `${mainLine}   •   ${aroundLeagueText}   •   ${aroundMlbText}`);
+  }
+
+  function updateFallback(message) {
+    const now = new Date().toLocaleTimeString();
+
+    setText("game", `${TEAM_A} vs ${TEAM_B}`);
+    setText("clock", "Waiting");
+    setText("currentTotal", "0");
+    setText("margin", "Even");
+    setText("feedStatus", "Waiting");
+    setText("feedSub", message);
+    setText("lastUpdatedTop", `Last update: ${now}`);
+    setText("ticker", `${TEAM_A} vs ${TEAM_B} | Spread: ${formatSpread(activeSpreadTeam, activeSpreadLine)} | Total: ${activeTotalLine} | Last update: ${now}   •   ${aroundLeagueText}   •   ${aroundMlbText}`);
+  }
+
+  async function updateGame() {
+    const now = new Date().toLocaleTimeString();
+
+    try {
+      const response = await fetch(NBA_SCOREBOARD_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error(`Scoreboard HTTP error ${response.status}`);
+
+      const data = await response.json();
+      const events = data.events || [];
+      const game = findTargetGame(events);
+
+      if (!game) {
+        updateFallback("Game not found on today's NBA scoreboard yet. Waiting for official feed.");
+        return;
+      }
+
+      latestEventId = game.id;
+      updateOddsFromGame(game);
+      setPregamePanel();
+
+      const compA = getCompetitor(game, TEAM_A);
+      const compB = getCompetitor(game, TEAM_B);
+
+      const scoreA = parseInt(compA?.score || "0", 10);
+      const scoreB = parseInt(compB?.score || "0", 10);
+      const statusText = getStatusText(game.status);
+      const state = getState(game.status);
+
+      if (lastScoreA !== null && scoreA !== lastScoreA) pulseScore("teamAScore");
+      if (lastScoreB !== null && scoreB !== lastScoreB) pulseScore("teamBScore");
+      lastScoreA = scoreA;
+      lastScoreB = scoreB;
+
+      setText("teamAName", TEAM_A);
+      setText("teamBName", TEAM_B);
+
+      setText("teamARecord", getRecord(compA));
+      setText("teamBRecord", getRecord(compB));
+      setText("teamAScore", scoreA);
+      setText("teamBScore", scoreB);
+      setText("game", `${TEAM_A} vs ${TEAM_B}`);
+      setText("clock", statusText);
+      setText("lastUpdatedTop", `Last update: ${now}`);
+
+      if (state === "pre") {
+        setText("liveBadge", "PREGAME");
+        setText("feedStatus", "Pregame");
+        rotatePregameMessage();
+      } else if (state === "in") {
+        setText("liveBadge", "LIVE");
+        setText("feedStatus", "Connected");
+        setText("feedSub", `Scoreboard feed active • Refreshes every ${REFRESH_MS / 1000}s`);
+      } else if (state === "post") {
+        setText("liveBadge", "FINAL");
+        setText("feedStatus", "Final");
+        setText("feedSub", "Game complete. Final score displayed.");
+      } else {
+        setText("liveBadge", "LIVE");
+        setText("feedStatus", "Connected");
+        setText("feedSub", `Scoreboard feed active • Refreshes every ${REFRESH_MS / 1000}s`);
+      }
+
+      updateMargin(scoreA, scoreB);
+      updateSpreadTracker(scoreA, scoreB, state);
+      updateTotalTracker(scoreA, scoreB, state);
+      updateGameIntelligence(latestEventId);
+      updateTicker(scoreA, scoreB, statusText, now);
+    } catch (error) {
+      updateFallback(`Scoreboard feed unavailable. Retrying automatically. ${error.message}`);
+    }
+  }
+
+  setTeamColors(TEAM_A, TEAM_B);
+  setPregamePanel();
+  updateFallback("Connecting to scoreboard feeds...");
+  updateAroundLeague();
+  updateAroundMlb();
   updateGame();
+
+  setInterval(updateAroundLeague, REFRESH_MS);
+  setInterval(updateAroundMlb, REFRESH_MS);
   setInterval(updateGame, REFRESH_MS);
 </script>
-
 </body>
 </html>
