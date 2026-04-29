@@ -1,0 +1,13 @@
+# media files
+*.mp4
+*.png
+*.jpg
+*.jpeg
+
+# documents
+*.docx
+*.pdf
+
+# system
+.DS_Store
+Thumbs.db
