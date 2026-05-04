@@ -1,786 +1,701 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Sports Terminal</title>
+<meta charset="UTF-8" />
+<title>Sports Terminal | 76ers vs Knicks</title>
 
-  <style>
-    :root {
-      --panel: rgba(255, 255, 255, 0.055);
-      --border: rgba(255, 255, 255, 0.13);
-      --text: #ffffff;
-      --muted: #aeb4bd;
-      --terminal: #00ffcc;
-      --danger: #ff4d6d;
-      --gold: #ffd166;
-    }
+<style>
+:root {
+  --bg:#050607;
+  --terminal:#00ffcc;
+  --muted:#9ea7b3;
+  --danger:#ff4d6d;
+  --sixers:#006bb6;
+  --knicks:#f58426;
+}
 
-    * { box-sizing: border-box; }
+* { box-sizing:border-box; }
 
-    body {
-      margin: 0;
-      width: 100vw;
-      height: 100vh;
-      background:
-        radial-gradient(circle at top left, rgba(0, 255, 204, 0.16), transparent 32%),
-        radial-gradient(circle at top right, rgba(0, 119, 192, 0.14), transparent 34%),
-        linear-gradient(180deg, #111419 0%, #050607 62%, #000 100%);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
-      overflow: hidden;
-    }
+body {
+  margin:0;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(0,107,182,.32), transparent 30%),
+    radial-gradient(circle at 82% 8%, rgba(245,132,38,.26), transparent 34%),
+    linear-gradient(180deg,#111419 0%,#050607 58%,#000 100%);
+  color:white;
+  font-family:Arial, Helvetica, sans-serif;
+}
 
-    .shell {
-      width: 100vw;
-      height: 100vh;
-      padding: 24px 34px 58px;
-      display: grid;
-      grid-template-rows: 72px 1fr 46px;
-      gap: 18px;
-    }
+.logo {
+  position:absolute;
+  top:14px;
+  right:24px;
+  width:76px;
+  height:76px;
+  object-fit:cover;
+  border-radius:8px;
+  z-index:50;
+  box-shadow:0 0 24px rgba(0,160,255,.45);
+}
 
-    .topbar {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      border-radius: 22px;
-      padding: 16px 22px;
-      background: rgba(0, 0, 0, 0.32);
-      border: 1px solid rgba(0, 255, 204, 0.18);
-      box-shadow: 0 0 46px rgba(0, 255, 204, 0.08);
-    }
+.topbar {
+  height:82px;
+  padding:14px 120px 14px 28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(0,0,0,.42);
+  border-bottom:1px solid rgba(0,255,204,.18);
+}
 
-    .brand-title {
-      font-size: 30px;
-      font-weight: 900;
-      color: var(--terminal);
-      letter-spacing: 2px;
-    }
+.brand {
+  color:var(--terminal);
+  font-weight:900;
+  font-size:30px;
+  letter-spacing:1.4px;
+}
 
-    .brand-subtitle {
-      font-size: 16px;
-      color: var(--muted);
-      letter-spacing: 0.5px;
-    }
+.subtitle {
+  margin-top:4px;
+  color:#b9c6d4;
+  font-size:14px;
+  font-weight:700;
+}
 
-    .top-status {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
+.live {
+  padding:10px 18px;
+  border-radius:999px;
+  color:var(--danger);
+  background:rgba(255,77,109,.12);
+  border:1px solid rgba(255,77,109,.55);
+  font-weight:900;
+}
 
-    .live-badge {
-      padding: 10px 18px;
-      border-radius: 999px;
-      background: rgba(255, 0, 60, 0.16);
-      border: 1px solid rgba(255, 0, 60, 0.55);
-      color: var(--danger);
-      font-size: 16px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      min-width: 110px;
-      text-align: center;
-    }
+.main {
+  display:grid;
+  grid-template-columns:300px 1fr 300px;
+  height:calc(100vh - 82px);
+  gap:16px;
+  padding:18px 24px 52px;
+}
 
-    .clock-pill {
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.13);
-      color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      min-width: 180px;
-      text-align: center;
-    }
+.side {
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
 
-    .main-grid {
-      display: grid;
-      grid-template-columns: 315px 1fr 315px;
-      gap: 18px;
-      min-height: 0;
-    }
+.card {
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:20px;
+  padding:16px;
+}
 
-    .panel {
-      border-radius: 24px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      box-shadow: 0 0 42px rgba(0, 0, 0, 0.35);
-      overflow: hidden;
-    }
+.card.feature {
+  border-color:rgba(0,255,204,.25);
+  background:rgba(0,255,204,.06);
+}
 
-    .side-panel {
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+.label {
+  font-size:12px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:900;
+  margin-bottom:8px;
+}
 
-    .panel-title {
-      color: var(--terminal);
-      font-size: 15px;
-      font-weight: 900;
-      letter-spacing: 1.3px;
-      text-transform: uppercase;
-    }
+.value {
+  font-size:22px;
+  font-weight:900;
+}
 
-    .data-card {
-      border-radius: 18px;
-      padding: 14px;
-      background: rgba(0, 0, 0, 0.34);
-      border: 1px solid rgba(255, 255, 255, 0.11);
-    }
+.subvalue {
+  margin-top:8px;
+  color:#b9c6d4;
+  font-size:13px;
+  line-height:1.35;
+}
 
-    .label {
-      font-size: 13px;
-      color: #8d96a3;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-      font-weight: 800;
-    }
+.center {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
 
-    .value {
-      font-size: 24px;
-      font-weight: 900;
-      color: #fff;
-      line-height: 1.1;
-    }
+.court-wrap {
+  width:88%;
+  margin-bottom:22px;
+}
 
-    .subvalue {
-      margin-top: 7px;
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.25;
-    }
+.court-label {
+  display:flex;
+  justify-content:space-between;
+  color:#b9c6d4;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
 
-    .score-panel {
-      padding: 22px;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      gap: 18px;
-      background: rgba(255, 255, 255, 0.064);
-      border: 1px solid rgba(0, 255, 204, 0.2);
-      box-shadow: 0 0 64px rgba(0, 255, 204, 0.12);
-    }
+.court {
+  height:220px;
+  border-radius:24px;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg, rgba(0,107,182,.25), transparent 48%, rgba(245,132,38,.22)),
+    radial-gradient(circle at center, rgba(255,255,255,.07), transparent 18%),
+    rgba(255,255,255,.045);
+  border:2px solid rgba(255,255,255,.14);
+}
 
-    .game-head { text-align: center; }
+.court:before {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg, transparent 49.8%, rgba(255,255,255,.24) 50%, transparent 50.2%),
+    radial-gradient(circle at center, transparent 0 58px, rgba(255,255,255,.20) 59px 61px, transparent 62px);
+}
 
-    .game-title {
-      font-size: 40px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
+.hoop {
+  position:absolute;
+  top:50%;
+  width:48px;
+  height:86px;
+  transform:translateY(-50%);
+  border:2px solid rgba(255,255,255,.22);
+}
 
-    .game-subtitle {
-      color: var(--muted);
-      font-size: 17px;
-    }
+.hoop.left { left:18px; border-left:0; }
+.hoop.right { right:18px; border-right:0; }
 
-    .score-row {
-      display: grid;
-      grid-template-columns: 1fr 90px 1fr;
-      align-items: stretch;
-      gap: 16px;
-    }
+.possession-glow {
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:48%;
+  opacity:0;
+  transition:.5s ease;
+  pointer-events:none;
+}
 
-    .team-box {
-      border-radius: 24px;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 242px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      box-shadow: inset 0 0 38px rgba(0, 0, 0, 0.25);
-      position: relative;
-    }
+.possession-glow.left {
+  left:0;
+  background:linear-gradient(90deg, rgba(0,107,182,.42), transparent);
+}
 
-    .team-badge {
-      width: 92px;
-      height: 92px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.92);
-      color: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-      font-weight: 900;
-      margin-bottom: 12px;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.35);
-    }
+.possession-glow.right {
+  right:0;
+  background:linear-gradient(270deg, rgba(245,132,38,.42), transparent);
+}
 
-    .team-name {
-      font-size: 38px;
-      font-weight: 900;
-      letter-spacing: 2px;
-    }
+.possession-glow.active {
+  opacity:1;
+}
 
-    .team-record {
-      margin-top: 8px;
-      font-size: 16px;
-      color: rgba(255,255,255,0.78);
-      font-weight: 700;
-    }
+.ball {
+  width:36px;
+  height:36px;
+  background:radial-gradient(circle at 35% 28%, #ffd08a, #f28c28 42%, #b65212 78%);
+  border-radius:50%;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  transition:left .7s ease, top .7s ease, box-shadow .4s ease;
+  box-shadow:0 0 26px rgba(242,140,40,.85);
+  z-index:5;
+}
 
-    .team-score {
-      font-size: 88px;
-      font-weight: 900;
-      line-height: 0.95;
-      margin-top: 8px;
-      text-shadow: 0 8px 28px rgba(0,0,0,0.4);
-      transition: transform 0.22s ease, text-shadow 0.22s ease;
-    }
+.ball.pulse {
+  animation:ballPulse .8s ease;
+}
 
-    .score-pulse {
-      transform: scale(1.12);
-      text-shadow: 0 0 30px rgba(0, 255, 204, 0.75);
-    }
+@keyframes ballPulse {
+  0% { transform:translate(-50%,-50%) scale(1); }
+  50% { transform:translate(-50%,-50%) scale(1.35); }
+  100% { transform:translate(-50%,-50%) scale(1); }
+}
 
-    .versus {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      font-size: 30px;
-      font-weight: 900;
-    }
+.scoreboard {
+  display:grid;
+  grid-template-columns:1fr 100px 1fr;
+  width:88%;
+  align-items:center;
+  gap:16px;
+}
 
-    .game-state-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-    }
+.team {
+  text-align:center;
+  padding:24px 18px;
+  border-radius:26px;
+  min-height:210px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 20px 45px rgba(0,0,0,.30);
+  transition:.25s;
+}
 
-    .state-card {
-      border-radius: 18px;
-      padding: 14px;
-      text-align: center;
-      background: rgba(0, 0, 0, 0.32);
-      border: 1px solid rgba(0, 255, 204, 0.16);
-    }
+.flash {
+  animation:scoreFlash 1s ease;
+}
 
-    .state-label {
-      color: #8d96a3;
-      font-size: 12px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
+@keyframes scoreFlash {
+  0% { transform:scale(1); box-shadow:0 0 0 rgba(0,255,204,0); }
+  40% { transform:scale(1.04); box-shadow:0 0 45px rgba(0,255,204,.75); }
+  100% { transform:scale(1); }
+}
 
-    .state-value {
-      color: #fff;
-      font-size: 22px;
-      font-weight: 900;
-    }
+.sixers { background:linear-gradient(135deg,var(--sixers),#050505); }
+.knicks { background:linear-gradient(135deg,#003da5,var(--knicks)); }
 
-    .bases {
-      display: grid;
-      grid-template-columns: 34px 34px 34px;
-      grid-template-rows: 34px 34px;
-      justify-content: center;
-      align-items: center;
-      gap: 2px;
-      margin-top: 8px;
-    }
+.team-name {
+  font-size:42px;
+  font-weight:900;
+}
 
-    .base {
-      width: 26px;
-      height: 26px;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.35);
-      transform: rotate(45deg);
-    }
+.team-full {
+  margin-top:5px;
+  color:rgba(255,255,255,.82);
+  font-size:14px;
+  font-weight:800;
+  text-transform:uppercase;
+}
 
-    .base.active {
-      background: var(--gold);
-      box-shadow: 0 0 18px rgba(255, 209, 102, 0.85);
-    }
+.score {
+  font-size:92px;
+  font-weight:900;
+  line-height:.95;
+  margin-top:16px;
+}
 
-    .base.second { grid-column: 2; grid-row: 1; }
-    .base.third { grid-column: 1; grid-row: 2; }
-    .base.first { grid-column: 3; grid-row: 2; }
+.vs {
+  text-align:center;
+  font-size:32px;
+  font-weight:900;
+  color:var(--terminal);
+  text-shadow:0 0 18px rgba(0,255,204,.45);
+}
 
-    .ticker {
-      border-radius: 18px;
-      display: flex;
-      align-items: center;
-      padding: 10px 16px;
-      font-size: 20px;
-      font-weight: 900;
-      color: var(--terminal);
-      background: rgba(0, 255, 204, 0.08);
-      border: 1px solid rgba(0, 255, 204, 0.18);
-      white-space: nowrap;
-      overflow: hidden;
-    }
+.spotlight {
+  margin-top:22px;
+  width:88%;
+  display:grid;
+  grid-template-columns:90px 1fr auto;
+  gap:16px;
+  align-items:center;
+  padding:14px 18px;
+  border-radius:22px;
+  background:rgba(0,0,0,.42);
+  border:1px solid rgba(0,255,204,.18);
+}
 
-    .ticker-track {
-      display: inline-block;
-      padding-left: 100%;
-      animation: scrollTicker 60s linear infinite;
-    }
+.headshot {
+  width:76px;
+  height:76px;
+  border-radius:16px;
+  object-fit:cover;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.16);
+}
 
-    @keyframes scrollTicker {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
+.spotlight-name {
+  font-size:27px;
+  font-weight:900;
+}
 
-    .footer {
-      position: absolute;
-      bottom: 8px;
-      width: 100%;
-      text-align: center;
-      font-size: 13px;
-      color: #7c828d;
-    }
-  </style>
+.alert {
+  padding:12px 16px;
+  border-radius:999px;
+  background:rgba(255,77,109,.14);
+  border:1px solid rgba(255,77,109,.45);
+  color:#fff;
+  font-weight:900;
+  min-width:170px;
+  text-align:center;
+}
+
+.score-popup {
+  position:absolute;
+  top:260px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:18px 28px;
+  border-radius:22px;
+  background:rgba(0,0,0,.82);
+  border:1px solid rgba(0,255,204,.4);
+  box-shadow:0 0 45px rgba(0,255,204,.35);
+  font-size:26px;
+  font-weight:900;
+  opacity:0;
+  pointer-events:none;
+  z-index:30;
+}
+
+.score-popup.show {
+  animation:popupFloat 2.2s ease;
+}
+
+@keyframes popupFloat {
+  0% { opacity:0; transform:translate(-50%,20px) scale(.95); }
+  15% { opacity:1; transform:translate(-50%,0) scale(1); }
+  75% { opacity:1; transform:translate(-50%,-10px) scale(1); }
+  100% { opacity:0; transform:translate(-50%,-35px) scale(.96); }
+}
+
+.ticker {
+  position:absolute;
+  left:24px;
+  right:24px;
+  bottom:12px;
+  height:34px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(0,255,204,.075);
+  border:1px solid rgba(0,255,204,.16);
+  color:var(--terminal);
+  display:flex;
+  align-items:center;
+  font-weight:900;
+  font-size:15px;
+  white-space:nowrap;
+}
+
+.ticker-track {
+  display:inline-block;
+  padding-left:100%;
+  animation:scrollTicker 50s linear infinite;
+}
+
+@keyframes scrollTicker {
+  0% { transform:translateX(0); }
+  100% { transform:translateX(-100%); }
+}
+</style>
 </head>
 
 <body>
-<div class="shell">
-  <div class="topbar">
-    <div class="brand">
-      <div class="brand-title">THE SPORTS TERMINAL</div>
-      <div class="brand-subtitle">White Sox vs Angels • live MLB scoreboard • inning • count • bases • latest play • MLB ticker</div>
-    </div>
-    <div class="top-status">
-      <div class="clock-pill" id="lastUpdatedTop">Connecting...</div>
-      <div class="live-badge" id="liveBadge">LIVE</div>
-    </div>
+
+<img src="logo.png" class="logo" />
+
+<div class="topbar">
+  <div>
+    <div class="brand">THE SPORTS TERMINAL</div>
+    <div class="subtitle">76ers vs Knicks • Live NBA Playoff Dashboard</div>
   </div>
-
-  <div class="main-grid">
-    <div class="panel side-panel">
-      <div class="panel-title">Game Intelligence</div>
-
-      <div class="data-card">
-        <div class="label">Latest Play</div>
-        <div class="value" id="latestPlay" style="font-size: 20px;">Awaiting game action</div>
-        <div class="subvalue" id="latestPlaySub">Play-by-play appears when available</div>
-      </div>
-
-      <div class="data-card">
-        <div class="label">Game Situation</div>
-        <div class="value" id="situation">Pregame</div>
-        <div class="subvalue" id="situationSub">Count, outs, and bases update live</div>
-      </div>
-
-      <div class="data-card">
-        <div class="label">Attention Note</div>
-        <div class="value" id="attentionNote" style="font-size: 20px;">Live game tracker starting soon</div>
-        <div class="subvalue" id="attentionSub">Designed for quick viewing at work or on the job site</div>
-      </div>
-
-      <div class="data-card">
-        <div class="label">Feed Status</div>
-        <div class="value" id="feedStatus">Initializing</div>
-        <div class="subvalue" id="feedSub">Waiting for scoreboard connection</div>
-      </div>
-    </div>
-
-    <div class="panel score-panel">
-      <div class="game-head">
-        <div class="game-title" id="game">WHITE SOX vs ANGELS</div>
-        <div class="game-subtitle" id="gameSubtitle">Live scoreboard, count, bases, inning, and key game updates</div>
-      </div>
-
-      <div class="score-row">
-        <div class="team-box" id="teamABox">
-          <div class="team-badge">CWS</div>
-          <div class="team-name" id="teamAName">CWS</div>
-          <div class="team-record" id="teamARecord">Record: —</div>
-          <div class="team-score" id="teamAScore">0</div>
-        </div>
-
-        <div class="versus">VS</div>
-
-        <div class="team-box" id="teamBBox">
-          <div class="team-badge">LAA</div>
-          <div class="team-name" id="teamBName">LAA</div>
-          <div class="team-record" id="teamBRecord">Record: —</div>
-          <div class="team-score" id="teamBScore">0</div>
-        </div>
-      </div>
-
-      <div class="game-state-row">
-        <div class="state-card">
-          <div class="state-label">Inning / Status</div>
-          <div class="state-value" id="clock">Connecting...</div>
-        </div>
-        <div class="state-card">
-          <div class="state-label">Count</div>
-          <div class="state-value" id="count">--</div>
-        </div>
-        <div class="state-card">
-          <div class="state-label">Outs</div>
-          <div class="state-value" id="outs">--</div>
-        </div>
-        <div class="state-card">
-          <div class="state-label">Bases</div>
-          <div class="bases">
-            <div class="base second" id="base2"></div>
-            <div class="base third" id="base3"></div>
-            <div class="base first" id="base1"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel side-panel">
-      <div class="panel-title">Game Tracker</div>
-
-      <div class="data-card">
-        <div class="label">Current Margin</div>
-        <div class="value" id="margin">Even</div>
-        <div class="subvalue">Updates from live score</div>
-      </div>
-
-      <div class="data-card">
-        <div class="label">Current Total Runs</div>
-        <div class="value" id="currentTotal">0</div>
-        <div class="subvalue">Combined runs scored</div>
-      </div>
-
-      <div class="data-card">
-        <div class="label">At Bat</div>
-        <div class="value" id="atBat" style="font-size: 20px;">N/A</div>
-        <div class="subvalue" id="atBatSub">Batter info appears when available</div>
-      </div>
-
-      <div class="data-card">
-        <div class="label">Pitching</div>
-        <div class="value" id="pitching" style="font-size: 20px;">N/A</div>
-        <div class="subvalue" id="pitchingSub">Pitcher info appears when available</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="ticker">
-    <div class="ticker-track" id="ticker">LIVE MLB DATA | Dashboard initializing...</div>
-  </div>
+  <div class="live" id="liveBadge">PREGAME</div>
 </div>
 
-<div class="footer">
-  No copyrighted video/audio | Informational live scoreboard only | Data refreshes automatically
+<div class="main">
+
+  <div class="side">
+    <div class="card feature">
+      <div class="label">Game</div>
+      <div class="value">76ERS vs KNICKS</div>
+      <div class="subvalue">NBA Playoffs • Live Terminal Feed</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Status</div>
+      <div class="value" id="status">Pregame</div>
+      <div class="subvalue" id="statusSub">Waiting for tipoff</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Scoring Alert</div>
+      <div class="value" id="scoreAlert">Standby</div>
+      <div class="subvalue">Shows latest scoring movement</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Last Play</div>
+      <div class="value" id="lastPlaySmall">Awaiting action</div>
+      <div class="subvalue">Updates from live play-by-play</div>
+    </div>
+  </div>
+
+  <div class="center">
+
+    <div class="score-popup" id="scorePopup">SCORING PLAY</div>
+
+    <div class="court-wrap">
+      <div class="court-label">
+        <span>PHI ATTACK</span>
+        <span id="possessionLabel">PREGAME FLOW</span>
+        <span>NYK ATTACK</span>
+      </div>
+      <div class="court">
+        <div class="possession-glow left" id="glowAway"></div>
+        <div class="possession-glow right" id="glowHome"></div>
+        <div class="hoop left"></div>
+        <div class="hoop right"></div>
+        <div class="ball" id="ball"></div>
+      </div>
+    </div>
+
+    <div class="scoreboard">
+      <div class="team sixers" id="teamABox">
+        <div class="team-name">PHI</div>
+        <div class="team-full">Philadelphia 76ers</div>
+        <div class="score" id="scoreA">0</div>
+      </div>
+
+      <div class="vs">VS</div>
+
+      <div class="team knicks" id="teamBBox">
+        <div class="team-name">NYK</div>
+        <div class="team-full">New York Knicks</div>
+        <div class="score" id="scoreB">0</div>
+      </div>
+    </div>
+
+    <div class="spotlight">
+      <img id="headshot" class="headshot" src="" />
+      <div>
+        <div class="label">Player / Play Spotlight</div>
+        <div class="spotlight-name" id="player">Awaiting Game Action</div>
+        <div class="subvalue" id="playerStat">Scoring play appears when feed is active</div>
+      </div>
+      <div class="alert" id="mode">NBA DATA MODE</div>
+    </div>
+
+  </div>
+
+  <div class="side">
+    <div class="card feature">
+      <div class="label">Quarter / Status</div>
+      <div class="value" id="quarter">Pregame</div>
+      <div class="subvalue">Updates automatically</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Game Clock</div>
+      <div class="value" id="clock">--</div>
+      <div class="subvalue">Live clock when available</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Total Points</div>
+      <div class="value" id="total">0</div>
+      <div class="subvalue">Combined live scoring total</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Last Updated</div>
+      <div class="value" id="updated">--</div>
+      <div class="subvalue">Refreshes every 3 seconds</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="ticker">
+  <div class="ticker-track" id="ticker">
+    THE SPORTS TERMINAL • 76ERS vs KNICKS • LIVE SCOREBOARD DASHBOARD • NO COMMENTARY • REAL-TIME NBA DATA VIEW
+  </div>
 </div>
 
 <script>
-  const TEAM_A = "CWS";
-  const TEAM_B = "LAA";
-  const GAME_DATE = "20260429";
-  const REFRESH_MS = 15000;
+const URL = "http://127.0.0.1:8010/game-feed";
 
-  let latestEventId = null;
-  let lastScoreA = null;
-  let lastScoreB = null;
-  let aroundMlbText = "Around MLB loading...";
-  let pregameMessageIndex = 0;
+const AWAY_ABBR = "PHI";
+const HOME_ABBR = "NYK";
 
-  const pregameMessages = [
-    "Awaiting first pitch — live scoring begins automatically",
-    "MLB score ticker active",
-    "Count, outs, and base runners update when the game feed is live",
-    "Latest play appears when play-by-play is available",
-    "No commentary — live information dashboard"
-  ];
+let lastAwayScore = null;
+let lastHomeScore = null;
+let lastPlayText = null;
 
-  const MLB_SCOREBOARD_URL =
-    `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard?dates=${GAME_DATE}`;
+const playerImages = {
+  "Joel Embiid": "https://cdn.nba.com/headshots/nba/latest/1040x760/203954.png",
+  "Tyrese Maxey": "https://cdn.nba.com/headshots/nba/latest/1040x760/1630178.png",
+  "Kelly Oubre": "https://cdn.nba.com/headshots/nba/latest/1040x760/1626162.png",
+  "Jalen Brunson": "https://cdn.nba.com/headshots/nba/latest/1040x760/1628973.png",
+  "Josh Hart": "https://cdn.nba.com/headshots/nba/latest/1040x760/1628404.png",
+  "OG Anunoby": "https://cdn.nba.com/headshots/nba/latest/1040x760/1628384.png",
+  "Karl-Anthony Towns": "https://cdn.nba.com/headshots/nba/latest/1040x760/1626157.png"
+};
 
-  const TEAM_COLORS = {
-    CWS: { primary: "#27251F", secondary: "#C4CED4" },
-    CHW: { primary: "#27251F", secondary: "#C4CED4" },
-    LAA: { primary: "#BA0021", secondary: "#003263" }
-  };
+function setText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.innerText = text;
+}
 
-  function getEl(id) { return document.getElementById(id); }
+function getQuarterText(period) {
+  if (period === 0) return "Pregame";
+  if (period === 1) return "1st";
+  if (period === 2) return "2nd";
+  if (period === 3) return "3rd";
+  if (period === 4) return "4th";
+  if (period > 4) return `OT${period - 4}`;
+  return "--";
+}
 
-  function setText(id, text) {
-    const el = getEl(id);
-    if (el) el.innerText = text;
+function flashTeam(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove("flash");
+  void el.offsetWidth;
+  el.classList.add("flash");
+}
+
+function pulseBall() {
+  const ball = document.getElementById("ball");
+  ball.classList.remove("pulse");
+  void ball.offsetWidth;
+  ball.classList.add("pulse");
+}
+
+function setActionSide(side) {
+  const ball = document.getElementById("ball");
+  const glowAway = document.getElementById("glowAway");
+  const glowHome = document.getElementById("glowHome");
+
+  glowAway.classList.remove("active");
+  glowHome.classList.remove("active");
+
+  if (side === "away") {
+    ball.style.left = "22%";
+    ball.style.top = "50%";
+    glowAway.classList.add("active");
+    setText("possessionLabel", "PHI LIVE ACTION");
+  } else if (side === "home") {
+    ball.style.left = "78%";
+    ball.style.top = "50%";
+    glowHome.classList.add("active");
+    setText("possessionLabel", "NYK LIVE ACTION");
+  } else {
+    ball.style.left = "50%";
+    ball.style.top = "50%";
+    setText("possessionLabel", "PREGAME FLOW");
   }
 
-  function safeText(value, fallback = "N/A") {
-    if (value === undefined || value === null || value === "" || value === "—") return fallback;
-    return value;
+  pulseBall();
+}
+
+function showPopup(text) {
+  const popup = document.getElementById("scorePopup");
+  popup.innerText = text;
+  popup.classList.remove("show");
+  void popup.offsetWidth;
+  popup.classList.add("show");
+}
+
+function findPlayerName(playText) {
+  if (!playText) return null;
+  const knownPlayers = Object.keys(playerImages);
+  return knownPlayers.find(name => playText.toLowerCase().includes(name.toLowerCase())) || null;
+}
+
+function updateHeadshot(playerName) {
+  const img = document.getElementById("headshot");
+  if (playerName && playerImages[playerName]) {
+    img.src = playerImages[playerName];
+  } else {
+    img.removeAttribute("src");
   }
+}
 
-  function pulseScore(id) {
-    const el = getEl(id);
-    if (!el) return;
-    el.classList.add("score-pulse");
-    setTimeout(() => el.classList.remove("score-pulse"), 350);
-  }
+async function update() {
+  const now = new Date().toLocaleTimeString();
 
-  function rotatePregameMessage() {
-    const message = pregameMessages[pregameMessageIndex % pregameMessages.length];
-    pregameMessageIndex++;
-    setText("feedSub", message);
-  }
+  try {
+    const res = await fetch(URL, { cache:"no-store" });
+    const data = await res.json();
 
-  function setTeamColors(teamA, teamB) {
-    const a = TEAM_COLORS[teamA] || { primary: "#333", secondary: "#777" };
-    const b = TEAM_COLORS[teamB] || { primary: "#333", secondary: "#777" };
+    const period = Number(data.period || 0);
+    const quarterText = getQuarterText(period);
+    const clockText = data.clock || "--";
 
-    getEl("teamABox").style.background =
-      `linear-gradient(135deg, ${a.primary}, ${a.secondary})`;
+    const awayScore = Number(data.awayScore || 0);
+    const homeScore = Number(data.homeScore || 0);
+    const total = awayScore + homeScore;
 
-    getEl("teamBBox").style.background =
-      `linear-gradient(135deg, ${b.primary}, ${b.secondary})`;
-  }
+    setText("scoreA", awayScore);
+    setText("scoreB", homeScore);
+    setText("total", total);
+    setText("quarter", quarterText);
+    setText("clock", clockText);
+    setText("updated", now);
 
-  function findTargetGame(events) {
-    return events.find(event => {
-      const competitors = event.competitions?.[0]?.competitors || [];
-      const abbreviations = competitors.map(c => c.team?.abbreviation);
-      return abbreviations.includes(TEAM_A) && abbreviations.includes(TEAM_B);
-    });
-  }
-
-  function getCompetitor(game, teamAbbrev) {
-    const competitors = game.competitions?.[0]?.competitors || [];
-    return competitors.find(c => c.team?.abbreviation === teamAbbrev);
-  }
-
-  function getRecord(comp) {
-    const record = comp?.records?.find(r => r.type === "total") || comp?.records?.[0];
-    return record?.summary ? `Record: ${record.summary}` : "Record: N/A";
-  }
-
-  function getStatusText(status) {
-    const type = status?.type;
-    if (!type) return "Status unavailable";
-    return type.shortDetail || type.detail || "Status unavailable";
-  }
-
-  function getState(status) {
-    return status?.type?.state || "pre";
-  }
-
-  function updateMargin(scoreA, scoreB) {
-    const diff = scoreA - scoreB;
-    if (diff > 0) setText("margin", `${TEAM_A} +${diff}`);
-    else if (diff < 0) setText("margin", `${TEAM_B} +${Math.abs(diff)}`);
-    else setText("margin", "Even");
-  }
-
-  function updateBases(situation) {
-    getEl("base1").classList.toggle("active", Boolean(situation?.onFirst));
-    getEl("base2").classList.toggle("active", Boolean(situation?.onSecond));
-    getEl("base3").classList.toggle("active", Boolean(situation?.onThird));
-  }
-
-  function updateSituation(game) {
-    const situation = game.competitions?.[0]?.situation || {};
-
-    const balls = situation.balls ?? "--";
-    const strikes = situation.strikes ?? "--";
-    const outs = situation.outs ?? "--";
-
-    setText("count", `${balls}-${strikes}`);
-    setText("outs", outs);
-    updateBases(situation);
-
-    const batter =
-      situation.batter?.athlete?.shortName ||
-      situation.batter?.athlete?.displayName ||
-      situation.batter?.displayName ||
-      "N/A";
-
-    const pitcher =
-      situation.pitcher?.athlete?.shortName ||
-      situation.pitcher?.athlete?.displayName ||
-      situation.pitcher?.displayName ||
-      "N/A";
-
-    setText("atBat", batter);
-    setText("pitching", pitcher);
-
-    if (balls !== "--" && strikes !== "--" && outs !== "--") {
-      setText("situation", `${balls}-${strikes}, ${outs} out${outs == 1 ? "" : "s"}`);
-      setText("situationSub", "Live count and outs from scoreboard feed");
+    if (period === 0) {
+      setText("liveBadge", "PREGAME");
+      setText("status", "Pregame");
+      setText("statusSub", "Waiting for tipoff");
+      setText("player", "Awaiting Game Action");
+      setText("playerStat", "Player spotlight activates when play-by-play starts");
+      setText("lastPlaySmall", "Awaiting action");
+      setActionSide(null);
     } else {
-      setText("situation", "Pregame / waiting");
-      setText("situationSub", "Count, outs, and bases appear once game feed is live");
+      setText("liveBadge", "LIVE");
+      setText("status", "In Progress");
+      setText("statusSub", "Live NBA feed connected");
     }
-  }
 
-  function getLatestPlay(summary) {
-    const plays = summary.plays || [];
-    if (Array.isArray(plays) && plays.length > 0) {
-      const last = plays[plays.length - 1];
-      return last.text || last.shortText || last.displayText || null;
+    if (lastAwayScore !== null && awayScore > lastAwayScore) {
+      const diff = awayScore - lastAwayScore;
+      setText("scoreAlert", `${AWAY_ABBR} +${diff}`);
+      flashTeam("teamABox");
+      setActionSide("away");
+      showPopup(`${AWAY_ABBR} +${diff}`);
     }
-    return null;
-  }
 
-  async function updateGameIntelligence(eventId) {
-    if (!eventId) return;
-
-    try {
-      const summaryUrl = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/summary?event=${eventId}`;
-      const response = await fetch(summaryUrl, { cache: "no-store" });
-      if (!response.ok) throw new Error("Summary feed unavailable");
-
-      const summary = await response.json();
-
-      const play = getLatestPlay(summary);
-      if (play) {
-        setText("latestPlay", play);
-        setText("latestPlaySub", "Latest available play-by-play update");
-        setText("attentionNote", "New play update");
-        setText("attentionSub", "Dashboard refreshed with latest game action");
-      } else {
-        setText("latestPlay", "Awaiting game action");
-        setText("latestPlaySub", "Play-by-play appears when available");
-      }
-    } catch (error) {
-      setText("latestPlay", "Awaiting game action");
-      setText("latestPlaySub", "Play-by-play feed not available yet");
+    if (lastHomeScore !== null && homeScore > lastHomeScore) {
+      const diff = homeScore - lastHomeScore;
+      setText("scoreAlert", `${HOME_ABBR} +${diff}`);
+      flashTeam("teamBBox");
+      setActionSide("home");
+      showPopup(`${HOME_ABBR} +${diff}`);
     }
-  }
 
-  function buildGameLine(event) {
-    const comps = event.competitions?.[0]?.competitors || [];
-    if (comps.length < 2) return null;
-
-    const away = comps.find(c => c.homeAway === "away") || comps[0];
-    const home = comps.find(c => c.homeAway === "home") || comps[1];
-
-    const awayAbbr = away.team?.abbreviation || "AWAY";
-    const homeAbbr = home.team?.abbreviation || "HOME";
-    const awayScore = away.score || "0";
-    const homeScore = home.score || "0";
-    const status = getStatusText(event.status);
-    const state = getState(event.status);
-
-    if (state === "pre") return `${awayAbbr} at ${homeAbbr} • ${status}`;
-    return `${awayAbbr} ${awayScore} - ${homeAbbr} ${homeScore} • ${status}`;
-  }
-
-  async function updateAroundMlb() {
-    try {
-      const response = await fetch(MLB_SCOREBOARD_URL, { cache: "no-store" });
-      if (!response.ok) throw new Error("MLB feed unavailable");
-
-      const data = await response.json();
-      const events = data.events || [];
-      const lines = events.map(buildGameLine).filter(Boolean).slice(0, 12);
-
-      aroundMlbText = lines.length > 0
-        ? `AROUND MLB: ${lines.join("   •   ")}`
-        : "AROUND MLB: Schedule loading from scoreboard feed";
-    } catch (error) {
-      aroundMlbText = "AROUND MLB: Score ticker temporarily unavailable";
+    if (data.actionTeam) {
+      setActionSide(data.actionTeam);
     }
-  }
 
-  function updateTicker(scoreA, scoreB, statusText, now) {
-    const mainLine = `LIVE | ${TEAM_A} ${scoreA} - ${TEAM_B} ${scoreB} | ${statusText} | Updated ${now}`;
-    setText("ticker", `${mainLine}   •   ${aroundMlbText}`);
-  }
+    if (data.lastPlay && data.lastPlay !== lastPlayText) {
+      const playerName = findPlayerName(data.lastPlay);
 
-  function updateFallback(message) {
-    const now = new Date().toLocaleTimeString();
+      setText("lastPlaySmall", data.lastPlay);
+      setText("player", playerName || "Latest Play");
+      setText("playerStat", data.lastPlay);
+      updateHeadshot(playerName);
 
-    setText("game", `${TEAM_A} vs ${TEAM_B}`);
-    setText("clock", "Waiting");
-    setText("count", "--");
-    setText("outs", "--");
-    setText("currentTotal", "0");
-    setText("margin", "Even");
-    setText("feedStatus", "Waiting");
-    setText("feedSub", message);
-    setText("lastUpdatedTop", `Last update: ${now}`);
-    setText("ticker", `${TEAM_A} vs ${TEAM_B} | First pitch 1:10 PM ET | Last update: ${now}   •   ${aroundMlbText}`);
-  }
-
-  async function updateGame() {
-    const now = new Date().toLocaleTimeString();
-
-    try {
-      const response = await fetch(MLB_SCOREBOARD_URL, { cache: "no-store" });
-      if (!response.ok) throw new Error(`Scoreboard HTTP error ${response.status}`);
-
-      const data = await response.json();
-      const events = data.events || [];
-      const game = findTargetGame(events);
-
-      if (!game) {
-        updateFallback("Game not found on today's MLB scoreboard yet. Waiting for official feed.");
-        return;
+      if (period !== 0) {
+        showPopup(data.lastPlay);
       }
 
-      latestEventId = game.id;
-
-      const compA = getCompetitor(game, TEAM_A);
-      const compB = getCompetitor(game, TEAM_B);
-
-      const scoreA = parseInt(compA?.score || "0", 10);
-      const scoreB = parseInt(compB?.score || "0", 10);
-      const statusText = getStatusText(game.status);
-      const state = getState(game.status);
-
-      if (lastScoreA !== null && scoreA !== lastScoreA) pulseScore("teamAScore");
-      if (lastScoreB !== null && scoreB !== lastScoreB) pulseScore("teamBScore");
-      lastScoreA = scoreA;
-      lastScoreB = scoreB;
-
-      setText("teamAName", TEAM_A);
-      setText("teamBName", TEAM_B);
-
-      setText("teamARecord", getRecord(compA));
-      setText("teamBRecord", getRecord(compB));
-      setText("teamAScore", scoreA);
-      setText("teamBScore", scoreB);
-      setText("game", `${TEAM_A} vs ${TEAM_B}`);
-      setText("clock", statusText);
-      setText("lastUpdatedTop", `Last update: ${now}`);
-      setText("currentTotal", scoreA + scoreB);
-
-      updateMargin(scoreA, scoreB);
-      updateSituation(game);
-
-      if (state === "pre") {
-        setText("liveBadge", "PREGAME");
-        setText("feedStatus", "Pregame");
-        rotatePregameMessage();
-        setText("attentionNote", "First pitch 1:10 PM ET");
-        setText("attentionSub", "White Sox vs Angels live tracker ready");
-      } else if (state === "in") {
-        setText("liveBadge", "LIVE");
-        setText("feedStatus", "Connected");
-        setText("feedSub", `MLB scoreboard feed active • Refreshes every ${REFRESH_MS / 1000}s`);
-      } else if (state === "post") {
-        setText("liveBadge", "FINAL");
-        setText("feedStatus", "Final");
-        setText("feedSub", "Game complete. Final score displayed.");
-      } else {
-        setText("liveBadge", "LIVE");
-        setText("feedStatus", "Connected");
-        setText("feedSub", `MLB scoreboard feed active • Refreshes every ${REFRESH_MS / 1000}s`);
-      }
-
-      updateGameIntelligence(latestEventId);
-      updateTicker(scoreA, scoreB, statusText, now);
-    } catch (error) {
-      updateFallback(`Scoreboard feed unavailable. Retrying automatically. ${error.message}`);
+      lastPlayText = data.lastPlay;
     }
+
+    setText(
+      "ticker",
+      `THE SPORTS TERMINAL • ${AWAY_ABBR} ${awayScore} - ${HOME_ABBR} ${homeScore} • ${quarterText} • ${clockText} • TOTAL ${total} • UPDATED ${now} • ${data.lastPlay || "AWAITING LIVE PLAY-BY-PLAY"}`
+    );
+
+    lastAwayScore = awayScore;
+    lastHomeScore = homeScore;
+
+  } catch (e) {
+    setText("liveBadge", "WAITING");
+    setText("status", "Pregame");
+    setText("statusSub", "Waiting for game feed");
+    setText("updated", now);
   }
+}
 
-  setTeamColors(TEAM_A, TEAM_B);
-  updateFallback("Connecting to MLB scoreboard feeds...");
-  updateAroundMlb();
-  updateGame();
-
-  setInterval(updateAroundMlb, REFRESH_MS);
-  setInterval(updateGame, REFRESH_MS);
+update();
+setInterval(update, 3000);
 </script>
+
 </body>
 </html>
