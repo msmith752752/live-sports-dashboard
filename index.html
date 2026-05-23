@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>Sports Terminal | 76ers vs Knicks</title>
+<title>Sports Terminal | Thunder vs Spurs</title>
 
 <style>
 :root {
@@ -10,8 +10,10 @@
   --terminal:#00ffcc;
   --muted:#9ea7b3;
   --danger:#ff4d6d;
-  --sixers:#006bb6;
-  --knicks:#f58426;
+  --thunder:#007AC1;
+  --thunderOrange:#EF3B24;
+  --spurs:#C0C0C0;
+  --spursBlack:#1a1a1a;
 }
 
 * { box-sizing:border-box; }
@@ -22,418 +24,312 @@ body {
   height:100vh;
   overflow:hidden;
   background:
-    radial-gradient(circle at 18% 10%, rgba(0,107,182,.32), transparent 30%),
-    radial-gradient(circle at 82% 8%, rgba(245,132,38,.26), transparent 34%),
+    radial-gradient(circle at 18% 10%, rgba(0,122,193,.36), transparent 30%),
+    radial-gradient(circle at 82% 8%, rgba(26,26,26,.6), transparent 34%),
     linear-gradient(180deg,#111419 0%,#050607 58%,#000 100%);
   color:white;
   font-family:Arial, Helvetica, sans-serif;
 }
 
-.logo {
-  position:absolute;
-  top:14px;
-  right:24px;
-  width:76px;
-  height:76px;
-  object-fit:cover;
-  border-radius:8px;
-  z-index:50;
-  box-shadow:0 0 24px rgba(0,160,255,.45);
-}
-
 .topbar {
-  height:82px;
-  padding:14px 120px 14px 28px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:rgba(0,0,0,.42);
+  height:72px; padding:0 16px;
+  display:flex; justify-content:space-between; align-items:center;
+  background:rgba(0,0,0,.52);
   border-bottom:1px solid rgba(0,255,204,.18);
 }
-
-.brand {
-  color:var(--terminal);
-  font-weight:900;
-  font-size:30px;
-  letter-spacing:1.4px;
+.brand { color:var(--terminal); font-weight:900; font-size:24px; letter-spacing:1.4px; }
+.subtitle { color:#b9c6d4; font-size:11px; font-weight:700; margin-top:3px; }
+.topbar-right { display:flex; align-items:center; gap:8px; }
+.live-badge {
+  padding:6px 14px; border-radius:999px;
+  color:var(--danger); background:rgba(255,77,109,.12);
+  border:1px solid rgba(255,77,109,.55); font-weight:900; font-size:12px;
+  white-space:nowrap;
 }
-
-.subtitle {
-  margin-top:4px;
-  color:#b9c6d4;
-  font-size:14px;
-  font-weight:700;
+.vote-cmd {
+  padding:6px 10px; border-radius:999px;
+  color:var(--terminal); background:rgba(0,255,204,.08);
+  border:1px solid rgba(0,255,204,.3); font-size:10px; font-weight:900; letter-spacing:.3px;
+  white-space:nowrap;
 }
-
-.live {
-  padding:10px 18px;
-  border-radius:999px;
-  color:var(--danger);
-  background:rgba(255,77,109,.12);
-  border:1px solid rgba(255,77,109,.55);
-  font-weight:900;
-}
+.logo { width:46px; height:46px; object-fit:cover; border-radius:8px; }
 
 .main {
-  display:grid;
-  grid-template-columns:300px 1fr 300px;
-  height:calc(100vh - 82px);
-  gap:16px;
-  padding:18px 24px 52px;
+  display:grid; grid-template-columns:290px 1fr 290px;
+  height:calc(100vh - 72px - 38px);
+  gap:12px; padding:12px 16px 8px;
 }
 
-.side {
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
+.side { display:flex; flex-direction:column; gap:10px; }
 .card {
-  background:rgba(255,255,255,.055);
-  border:1px solid rgba(255,255,255,.13);
-  border-radius:20px;
-  padding:16px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:16px; padding:13px 14px;
 }
-
-.card.feature {
-  border-color:rgba(0,255,204,.25);
-  background:rgba(0,255,204,.06);
-}
-
+.card.feature { border-color:rgba(0,255,204,.22); background:rgba(0,255,204,.05); }
+.card.okc { border-color:rgba(0,122,193,.4); background:rgba(0,122,193,.08); }
+.card.sas { border-color:rgba(192,192,192,.25); background:rgba(192,192,192,.05); }
 .label {
-  font-size:12px;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:1px;
-  font-weight:900;
-  margin-bottom:8px;
+  font-size:10px; color:var(--muted);
+  text-transform:uppercase; letter-spacing:1px; font-weight:900; margin-bottom:6px;
+}
+.value { font-size:20px; font-weight:900; }
+.subvalue { margin-top:5px; color:#b9c6d4; font-size:12px; line-height:1.35; }
+
+.play-feed { display:flex; flex-direction:column; gap:4px; max-height:148px; overflow:hidden; }
+.play-row {
+  display:flex; align-items:center; gap:6px;
+  padding:4px 8px; border-radius:8px;
+  background:rgba(255,255,255,.04);
+  border-left:3px solid rgba(255,255,255,.15);
+  font-size:11px; font-weight:800;
+  animation: fadeIn .4s ease;
+  overflow:hidden;
+}
+.play-row.okc { border-left-color: var(--thunder); }
+.play-row.sas { border-left-color: var(--spurs); }
+.play-tag {
+  font-size:9px; font-weight:900; letter-spacing:.6px;
+  padding:2px 5px; border-radius:4px;
+  background:rgba(0,255,204,.12); color:var(--terminal);
+  white-space:nowrap; flex-shrink:0; font-style:normal;
+  line-height:1.4;
+}
+.play-tag.score { background:rgba(0,122,193,.2); color:#64c8ff; }
+.play-tag.turnover { background:rgba(255,77,109,.15); color:#ff4d6d; }
+.play-tag.defense { background:rgba(192,192,192,.15); color:#c0c0c0; }
+.play-desc { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:10px; flex:1; }
+@keyframes fadeIn { from { opacity:0; transform:translateX(-6px); } to { opacity:1; transform:none; } }
+
+.momentum-bar {
+  width:100%; height:10px; margin-top:10px;
+  background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden;
+}
+.momentum-fill {
+  height:100%; width:50%; border-radius:999px;
+  background:linear-gradient(90deg, var(--thunder), var(--terminal));
+  transition:.6s ease;
+}
+.momentum-labels {
+  display:flex; justify-content:space-between;
+  font-size:10px; font-weight:900; margin-top:4px; color:var(--muted);
 }
 
-.value {
-  font-size:22px;
-  font-weight:900;
-}
-
-.subvalue {
-  margin-top:8px;
-  color:#b9c6d4;
-  font-size:13px;
-  line-height:1.35;
-}
+.vote-bars { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+.vote-row { display:flex; flex-direction:column; gap:2px; }
+.vote-name { font-size:11px; font-weight:900; display:flex; justify-content:space-between; }
+.vote-track { width:100%; height:8px; background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden; }
+.vote-fill { height:100%; border-radius:999px; background:linear-gradient(90deg, var(--terminal), var(--thunder)); transition: width .5s ease; }
+.ou-row { display:flex; gap:8px; margin-top:8px; }
+.ou-box { flex:1; padding:8px; border-radius:10px; text-align:center; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); }
+.ou-label { font-size:10px; font-weight:900; color:var(--muted); margin-bottom:3px; }
+.ou-count { font-size:18px; font-weight:900; }
+.ou-box.over { border-color:rgba(0,255,204,.3); }
+.ou-box.under { border-color:rgba(255,77,109,.3); }
+.ou-box.over .ou-count { color:var(--terminal); }
+.ou-box.under .ou-count { color:var(--danger); }
 
 .center {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  position:relative;
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:flex-start; position:relative; padding-top:6px;
 }
 
-.court-wrap {
-  width:88%;
-  margin-bottom:22px;
+.clutch-banner {
+  width:88%; margin-bottom:8px; display:none; text-align:center;
+  padding:8px 18px; border-radius:999px; color:#fff;
+  background:rgba(255,77,109,.18); border:1px solid rgba(255,77,109,.55);
+  font-weight:900; letter-spacing:1.5px; box-shadow:0 0 32px rgba(255,77,109,.28);
 }
+body.clutch .clutch-banner { display:block; }
+body.clutch .topbar, body.clutch .scoreboard { box-shadow:0 0 36px rgba(255,77,109,.25); }
+body.clutch .live-badge { animation:clutchPulse 1.2s infinite; }
+@keyframes clutchPulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.08); box-shadow:0 0 28px rgba(255,77,109,.65); } }
 
+.court-wrap { width:90%; margin-bottom:12px; }
 .court-label {
-  display:flex;
-  justify-content:space-between;
-  color:#b9c6d4;
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  margin-bottom:8px;
+  display:flex; justify-content:space-between;
+  color:#b9c6d4; font-size:10px; font-weight:900;
+  letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;
 }
-
 .court {
-  height:220px;
-  border-radius:24px;
-  position:relative;
-  overflow:hidden;
+  height:140px; border-radius:18px; position:relative; overflow:hidden;
   background:
-    linear-gradient(90deg, rgba(0,107,182,.25), transparent 48%, rgba(245,132,38,.22)),
+    linear-gradient(90deg, rgba(0,122,193,.28), transparent 48%, rgba(26,26,26,.6)),
     radial-gradient(circle at center, rgba(255,255,255,.07), transparent 18%),
-    rgba(255,255,255,.045);
-  border:2px solid rgba(255,255,255,.14);
+    rgba(255,255,255,.04);
+  border:2px solid rgba(255,255,255,.12);
 }
-
 .court:before {
-  content:"";
-  position:absolute;
-  inset:0;
+  content:""; position:absolute; inset:0;
   background:
-    linear-gradient(90deg, transparent 49.8%, rgba(255,255,255,.24) 50%, transparent 50.2%),
-    radial-gradient(circle at center, transparent 0 58px, rgba(255,255,255,.20) 59px 61px, transparent 62px);
+    linear-gradient(90deg, transparent 49.8%, rgba(255,255,255,.2) 50%, transparent 50.2%),
+    radial-gradient(circle at center, transparent 0 42px, rgba(255,255,255,.18) 43px 45px, transparent 46px);
 }
-
-.hoop {
-  position:absolute;
-  top:50%;
-  width:48px;
-  height:86px;
-  transform:translateY(-50%);
-  border:2px solid rgba(255,255,255,.22);
-}
-
-.hoop.left { left:18px; border-left:0; }
-.hoop.right { right:18px; border-right:0; }
-
-.possession-glow {
-  position:absolute;
-  top:0;
-  bottom:0;
-  width:48%;
-  opacity:0;
-  transition:.5s ease;
-  pointer-events:none;
-}
-
-.possession-glow.left {
-  left:0;
-  background:linear-gradient(90deg, rgba(0,107,182,.42), transparent);
-}
-
-.possession-glow.right {
-  right:0;
-  background:linear-gradient(270deg, rgba(245,132,38,.42), transparent);
-}
-
-.possession-glow.active {
-  opacity:1;
-}
-
+.hoop { position:absolute; top:50%; width:36px; height:64px; transform:translateY(-50%); border:2px solid rgba(255,255,255,.2); }
+.hoop.left { left:14px; border-left:0; }
+.hoop.right { right:14px; border-right:0; }
+.possession-glow { position:absolute; top:0; bottom:0; width:48%; opacity:0; transition:.5s ease; pointer-events:none; }
+.possession-glow.left { left:0; background:linear-gradient(90deg, rgba(0,122,193,.55), transparent); }
+.possession-glow.right { right:0; background:linear-gradient(270deg, rgba(192,192,192,.35), transparent); }
+.possession-glow.active { opacity:1; }
 .ball {
-  width:36px;
-  height:36px;
+  width:28px; height:28px;
   background:radial-gradient(circle at 35% 28%, #ffd08a, #f28c28 42%, #b65212 78%);
-  border-radius:50%;
-  position:absolute;
-  top:50%;
-  left:50%;
+  border-radius:50%; position:absolute; top:50%; left:50%;
   transform:translate(-50%,-50%);
-  transition:left .7s ease, top .7s ease, box-shadow .4s ease;
-  box-shadow:0 0 26px rgba(242,140,40,.85);
-  z-index:5;
+  transition:left .7s ease, top .7s ease;
+  box-shadow:0 0 20px rgba(242,140,40,.85); z-index:5;
 }
-
-.ball.pulse {
-  animation:ballPulse .8s ease;
-}
-
-@keyframes ballPulse {
-  0% { transform:translate(-50%,-50%) scale(1); }
-  50% { transform:translate(-50%,-50%) scale(1.35); }
-  100% { transform:translate(-50%,-50%) scale(1); }
-}
+.ball.pulse { animation:ballPulse .8s ease; }
+@keyframes ballPulse { 0%,100% { transform:translate(-50%,-50%) scale(1); } 50% { transform:translate(-50%,-50%) scale(1.4); } }
 
 .scoreboard {
-  display:grid;
-  grid-template-columns:1fr 100px 1fr;
-  width:88%;
-  align-items:center;
-  gap:16px;
+  display:grid; grid-template-columns:1fr 80px 1fr;
+  width:90%; align-items:center; gap:10px;
 }
-
 .team {
-  text-align:center;
-  padding:24px 18px;
-  border-radius:26px;
-  min-height:210px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  border:1px solid rgba(255,255,255,.18);
-  box-shadow:0 20px 45px rgba(0,0,0,.30);
-  transition:.25s;
+  text-align:center; padding:18px 14px; border-radius:20px;
+  min-height:160px; display:flex; flex-direction:column;
+  justify-content:center; border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 16px 40px rgba(0,0,0,.3); transition:.25s;
 }
-
-.flash {
-  animation:scoreFlash 1s ease;
-}
-
+.thunder-team { background:linear-gradient(135deg,#004f8a,#001f3d); }
+.spurs-team   { background:linear-gradient(135deg,#2a2a2a,#050505); }
+.flash { animation:scoreFlash 1s ease; }
 @keyframes scoreFlash {
-  0% { transform:scale(1); box-shadow:0 0 0 rgba(0,255,204,0); }
-  40% { transform:scale(1.04); box-shadow:0 0 45px rgba(0,255,204,.75); }
+  0%   { transform:scale(1); box-shadow:0 0 0 rgba(0,255,204,0); }
+  40%  { transform:scale(1.04); box-shadow:0 0 45px rgba(0,255,204,.75); }
   100% { transform:scale(1); }
 }
+.team-abbr { font-size:36px; font-weight:900; }
+.team-full { color:rgba(255,255,255,.8); font-size:12px; font-weight:800; text-transform:uppercase; margin-top:3px; }
+.score { font-size:76px; font-weight:900; line-height:.95; margin-top:12px; }
+.vs { text-align:center; font-size:26px; font-weight:900; color:var(--terminal); text-shadow:0 0 18px rgba(0,255,204,.45); }
 
-.sixers { background:linear-gradient(135deg,var(--sixers),#050505); }
-.knicks { background:linear-gradient(135deg,#003da5,var(--knicks)); }
-
-.team-name {
-  font-size:42px;
-  font-weight:900;
-}
-
-.team-full {
-  margin-top:5px;
-  color:rgba(255,255,255,.82);
-  font-size:14px;
-  font-weight:800;
-  text-transform:uppercase;
-}
-
-.score {
-  font-size:92px;
-  font-weight:900;
-  line-height:.95;
-  margin-top:16px;
-}
-
-.vs {
-  text-align:center;
-  font-size:32px;
-  font-weight:900;
-  color:var(--terminal);
-  text-shadow:0 0 18px rgba(0,255,204,.45);
-}
+.graph-wrap { width:90%; margin-top:10px; }
+.graph-title { font-size:10px; font-weight:900; letter-spacing:1px; color:var(--muted); text-transform:uppercase; margin-bottom:5px; display:flex; justify-content:space-between; }
+#momentumGraph { width:100%; height:110px; display:block; }
 
 .spotlight {
-  margin-top:22px;
-  width:88%;
-  display:grid;
-  grid-template-columns:90px 1fr auto;
-  gap:16px;
-  align-items:center;
-  padding:14px 18px;
-  border-radius:22px;
-  background:rgba(0,0,0,.42);
-  border:1px solid rgba(0,255,204,.18);
+  margin-top:10px; width:90%;
+  display:grid; grid-template-columns:70px 1fr auto;
+  gap:12px; align-items:center; padding:12px 14px;
+  border-radius:16px; background:rgba(0,0,0,.42);
+  border:1px solid rgba(0,255,204,.16);
 }
-
-.headshot {
-  width:76px;
-  height:76px;
-  border-radius:16px;
-  object-fit:cover;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.16);
-}
-
-.spotlight-name {
-  font-size:27px;
-  font-weight:900;
-}
-
-.alert {
-  padding:12px 16px;
-  border-radius:999px;
-  background:rgba(255,77,109,.14);
-  border:1px solid rgba(255,77,109,.45);
-  color:#fff;
-  font-weight:900;
-  min-width:170px;
-  text-align:center;
+.headshot { width:60px; height:60px; border-radius:12px; object-fit:cover; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); }
+.spotlight-name { font-size:21px; font-weight:900; }
+.play-type-badge {
+  padding:8px 12px; border-radius:999px; font-weight:900; font-size:12px;
+  background:rgba(0,255,204,.12); border:1px solid rgba(0,255,204,.3);
+  color:var(--terminal); min-width:90px; text-align:center;
 }
 
 .score-popup {
-  position:absolute;
-  top:260px;
-  left:50%;
-  transform:translateX(-50%);
-  padding:18px 28px;
-  border-radius:22px;
-  background:rgba(0,0,0,.82);
-  border:1px solid rgba(0,255,204,.4);
+  position:absolute; top:180px; left:50%; transform:translateX(-50%);
+  padding:14px 24px; border-radius:18px;
+  background:rgba(0,0,0,.88); border:1px solid rgba(0,255,204,.4);
   box-shadow:0 0 45px rgba(0,255,204,.35);
-  font-size:26px;
-  font-weight:900;
-  opacity:0;
-  pointer-events:none;
-  z-index:30;
+  font-size:22px; font-weight:900;
+  opacity:0; pointer-events:none; z-index:30;
 }
-
-.score-popup.show {
-  animation:popupFloat 2.2s ease;
-}
-
+.score-popup.show { animation:popupFloat 2.5s ease; }
 @keyframes popupFloat {
-  0% { opacity:0; transform:translate(-50%,20px) scale(.95); }
-  15% { opacity:1; transform:translate(-50%,0) scale(1); }
-  75% { opacity:1; transform:translate(-50%,-10px) scale(1); }
+  0%   { opacity:0; transform:translate(-50%,20px) scale(.95); }
+  15%  { opacity:1; transform:translate(-50%,0) scale(1); }
+  75%  { opacity:1; transform:translate(-50%,-10px) scale(1); }
   100% { opacity:0; transform:translate(-50%,-35px) scale(.96); }
 }
 
 .ticker {
-  position:absolute;
-  left:24px;
-  right:24px;
-  bottom:12px;
-  height:34px;
-  border-radius:999px;
-  overflow:hidden;
-  background:rgba(0,255,204,.075);
-  border:1px solid rgba(0,255,204,.16);
-  color:var(--terminal);
-  display:flex;
-  align-items:center;
-  font-weight:900;
-  font-size:15px;
-  white-space:nowrap;
+  position:absolute; left:16px; right:16px; bottom:8px;
+  height:30px; border-radius:999px; overflow:hidden;
+  background:rgba(0,255,204,.07); border:1px solid rgba(0,255,204,.14);
+  color:var(--terminal); display:flex; align-items:center;
+  font-weight:900; font-size:13px; white-space:nowrap;
 }
+.ticker-track { display:inline-block; padding-left:100%; animation:scrollTicker 55s linear infinite; }
+@keyframes scrollTicker { 0% { transform:translateX(0); } 100% { transform:translateX(-100%); } }
 
-.ticker-track {
-  display:inline-block;
-  padding-left:100%;
-  animation:scrollTicker 50s linear infinite;
+.scorer-row {
+  display:flex; justify-content:space-between; padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  font-size:13px; font-weight:800;
 }
+.scorer-row:last-child { border-bottom:0; }
+.scorer-team { font-size:9px; font-weight:900; padding:1px 5px; border-radius:3px; margin-left:4px; vertical-align:middle; }
+.scorer-team.okc { background:rgba(0,122,193,.3); color:#64c8ff; }
+.scorer-team.sas { background:rgba(192,192,192,.2); color:#c0c0c0; }
 
-@keyframes scrollTicker {
-  0% { transform:translateX(0); }
-  100% { transform:translateX(-100%); }
-}
+.clutch-meter { margin-top:8px; }
+.clutch-track { width:100%; height:8px; background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden; margin-top:6px; }
+.clutch-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#ff4d6d,#ff8c42); width:0%; transition:.8s ease; }
 </style>
 </head>
 
 <body>
 
-<img src="logo.png" class="logo" />
-
 <div class="topbar">
   <div>
     <div class="brand">THE SPORTS TERMINAL</div>
-    <div class="subtitle">76ers vs Knicks • Live NBA Playoff Dashboard</div>
+    <div class="subtitle">Thunder vs Spurs • Game 3 • Live Playoff Analysis</div>
   </div>
-  <div class="live" id="liveBadge">PREGAME</div>
+  <div class="topbar-right">
+    <div class="vote-cmd">💬 !predict [name] • !over • !under</div>
+    <div class="live-badge" id="liveBadge">LIVE</div>
+    <img src="logo.png" class="logo" />
+  </div>
 </div>
 
 <div class="main">
 
+  <!-- LEFT -->
   <div class="side">
-    <div class="card feature">
-      <div class="label">Game</div>
-      <div class="value">76ERS vs KNICKS</div>
-      <div class="subvalue">NBA Playoffs • Live Terminal Feed</div>
+    <div class="card okc">
+      <div class="label">Series</div>
+      <div class="value" style="color:#64c8ff;">Series Tied 1-1</div>
+      <div class="subvalue">Game 3 in San Antonio</div>
     </div>
-
     <div class="card">
       <div class="label">Status</div>
-      <div class="value" id="status">Pregame</div>
-      <div class="subvalue" id="statusSub">Waiting for tipoff</div>
+      <div class="value" id="status">Live</div>
+      <div class="subvalue" id="statusSub">NBA feed connected</div>
     </div>
-
-    <div class="card">
-      <div class="label">Scoring Alert</div>
-      <div class="value" id="scoreAlert">Standby</div>
-      <div class="subvalue">Shows latest scoring movement</div>
+    <div class="card feature">
+      <div class="label">Momentum (Last 8 Plays)</div>
+      <div class="value" id="momentumTitle">Neutral</div>
+      <div class="subvalue" id="momentumSub">Activates after scoring starts</div>
+      <div class="momentum-bar">
+        <div class="momentum-fill" id="momentumFill"></div>
+      </div>
+      <div class="momentum-labels"><span>OKC</span><span>SAS</span></div>
     </div>
-
+    <div class="card feature">
+      <div class="label">Clutch Factor</div>
+      <div class="value" id="clutchLabel">—</div>
+      <div class="subvalue" id="clutchSub">Based on margin + time remaining</div>
+      <div class="clutch-meter">
+        <div class="clutch-track"><div class="clutch-fill" id="clutchFill"></div></div>
+      </div>
+    </div>
     <div class="card">
-      <div class="label">Last Play</div>
-      <div class="value" id="lastPlaySmall">Awaiting action</div>
-      <div class="subvalue">Updates from live play-by-play</div>
+      <div class="label">Live Play Feed</div>
+      <div class="play-feed" id="playFeed">
+        <div class="play-row"><span class="play-tag">LIVE</span><span>Connecting to feed...</span></div>
+      </div>
     </div>
   </div>
 
+  <!-- CENTER -->
   <div class="center">
-
     <div class="score-popup" id="scorePopup">SCORING PLAY</div>
+    <div class="clutch-banner" id="clutchBanner">🚨 CLUTCH TIME — ONE POSSESSION GAME</div>
 
     <div class="court-wrap">
       <div class="court-label">
-        <span>PHI ATTACK</span>
-        <span id="possessionLabel">PREGAME FLOW</span>
-        <span>NYK ATTACK</span>
+        <span style="color:#64c8ff;">OKC ATTACK →</span>
+        <span id="possessionLabel">LIVE</span>
+        <span style="color:#c0c0c0;">← SAS ATTACK</span>
       </div>
       <div class="court">
         <div class="possession-glow left" id="glowAway"></div>
@@ -445,257 +341,402 @@ body {
     </div>
 
     <div class="scoreboard">
-      <div class="team sixers" id="teamABox">
-        <div class="team-name">PHI</div>
-        <div class="team-full">Philadelphia 76ers</div>
+      <div class="team thunder-team" id="teamABox">
+        <div class="team-abbr">OKC</div>
+        <div class="team-full">Oklahoma City Thunder</div>
         <div class="score" id="scoreA">0</div>
       </div>
-
       <div class="vs">VS</div>
-
-      <div class="team knicks" id="teamBBox">
-        <div class="team-name">NYK</div>
-        <div class="team-full">New York Knicks</div>
+      <div class="team spurs-team" id="teamBBox">
+        <div class="team-abbr">SAS</div>
+        <div class="team-full">San Antonio Spurs</div>
         <div class="score" id="scoreB">0</div>
       </div>
+    </div>
+
+    <div class="graph-wrap">
+      <div class="graph-title">
+        <span style="color:#64c8ff;">▲ OKC LEADING</span>
+        <span>LIVE DIFFERENTIAL</span>
+        <span style="color:#c0c0c0;">▼ SAS LEADING</span>
+      </div>
+      <svg id="momentumGraph" viewBox="0 0 400 90" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="okcGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#007AC1" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#007AC1" stop-opacity="0.1"/>
+          </linearGradient>
+          <linearGradient id="sasGrad" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="#C0C0C0" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#C0C0C0" stop-opacity="0.1"/>
+          </linearGradient>
+          <clipPath id="clipAbove"><rect x="0" y="0" width="400" height="45"/></clipPath>
+          <clipPath id="clipBelow"><rect x="0" y="45" width="400" height="45"/></clipPath>
+        </defs>
+        <!-- zero line -->
+        <line x1="0" y1="45" x2="400" y2="45" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-dasharray="4,4"/>
+        <!-- OKC label left -->
+        <text x="4" y="14" fill="#007AC1" font-size="8" font-weight="900" opacity="0.9">OKC +</text>
+        <!-- SAS label left -->
+        <text x="4" y="86" fill="#C0C0C0" font-size="8" font-weight="900" opacity="0.9">SAS +</text>
+        <!-- filled area above zero (OKC leading) -->
+        <polygon id="diffFillOKC" fill="url(#okcGrad)" clip-path="url(#clipAbove)" points="0,45 400,45"/>
+        <!-- filled area below zero (SAS leading) -->
+        <polygon id="diffFillSAS" fill="url(#sasGrad)" clip-path="url(#clipBelow)" points="0,45 400,45"/>
+        <!-- the wave line itself -->
+        <polyline id="diffLine" fill="none" stroke="white" stroke-width="2.5" stroke-linejoin="round" points="0,45"/>
+        <!-- current diff dot -->
+        <circle id="diffDot" cx="0" cy="45" r="5" fill="white" filter="drop-shadow(0 0 6px white)"/>
+        <!-- current diff label -->
+        <text id="diffLabel" x="0" y="0" fill="white" font-size="9" font-weight="900" text-anchor="middle"></text>
+      </svg>
     </div>
 
     <div class="spotlight">
       <img id="headshot" class="headshot" src="" />
       <div>
-        <div class="label">Player / Play Spotlight</div>
-        <div class="spotlight-name" id="player">Awaiting Game Action</div>
-        <div class="subvalue" id="playerStat">Scoring play appears when feed is active</div>
+        <div class="label">Player Spotlight</div>
+        <div class="spotlight-name" id="player">Awaiting Action</div>
+        <div class="subvalue" id="playerStat">Live feed active</div>
       </div>
-      <div class="alert" id="mode">NBA DATA MODE</div>
+      <div class="play-type-badge" id="playTypeBadge">LIVE</div>
     </div>
-
   </div>
 
+  <!-- RIGHT -->
   <div class="side">
     <div class="card feature">
-      <div class="label">Quarter / Status</div>
-      <div class="value" id="quarter">Pregame</div>
-      <div class="subvalue">Updates automatically</div>
+      <div class="label">Quarter / Clock</div>
+      <div class="value" id="quarter">--</div>
+      <div class="value" id="clock" style="font-size:28px;color:var(--terminal);margin-top:4px;">--</div>
     </div>
-
-    <div class="card">
-      <div class="label">Game Clock</div>
-      <div class="value" id="clock">--</div>
-      <div class="subvalue">Live clock when available</div>
-    </div>
-
     <div class="card">
       <div class="label">Total Points</div>
       <div class="value" id="total">0</div>
-      <div class="subvalue">Combined live scoring total</div>
+      <div class="subvalue" id="ouResult">Tracking over/under live</div>
     </div>
-
+    <div class="card feature">
+      <div class="label">🗳️ Chat Predictions — Who Scores Next?</div>
+      <div class="subvalue" id="voteQuestion" style="margin-bottom:8px;color:#fff;font-size:13px;font-weight:900;">Type !predict [name] in chat</div>
+      <div class="vote-bars" id="voteBars">
+        <div class="subvalue">Votes appear once chat is live</div>
+      </div>
+      <div class="ou-row">
+        <div class="ou-box over"><div class="ou-label">!OVER</div><div class="ou-count" id="overCount">0</div></div>
+        <div class="ou-box under"><div class="ou-label">!UNDER</div><div class="ou-count" id="underCount">0</div></div>
+      </div>
+      <div class="subvalue" style="margin-top:6px;" id="totalVotes">0 total votes</div>
+    </div>
+    <div class="card">
+      <div class="label">Top Scorers (Estimated)</div>
+      <div id="topScorers">
+        <div class="scorer-row"><span>Awaiting data</span><span>--</span></div>
+      </div>
+      <div class="subvalue" style="margin-top:6px;">Tracked from play-by-play</div>
+    </div>
     <div class="card">
       <div class="label">Last Updated</div>
       <div class="value" id="updated">--</div>
       <div class="subvalue">Refreshes every 3 seconds</div>
     </div>
   </div>
-
 </div>
 
 <div class="ticker">
   <div class="ticker-track" id="ticker">
-    THE SPORTS TERMINAL • 76ERS vs KNICKS • LIVE SCOREBOARD DASHBOARD • NO COMMENTARY • REAL-TIME NBA DATA VIEW
+    THE SPORTS TERMINAL • THUNDER vs SPURS • GAME 3 • LIVE PLAYOFF ANALYSIS • NO COMMENTARY • TYPE !predict !over !under IN CHAT TO VOTE
   </div>
 </div>
 
 <script>
-const URL = "http://127.0.0.1:8010/game-feed";
+const FEED_URL  = "http://127.0.0.1:8010/game-feed";
+const VOTES_URL = "http://127.0.0.1:8010/votes";
 
-const AWAY_ABBR = "PHI";
-const HOME_ABBR = "NYK";
+const AWAY_ABBR = "OKC";
+const HOME_ABBR = "SAS";
 
-let lastAwayScore = null;
-let lastHomeScore = null;
-let lastPlayText = null;
+let lastAwayScore = null, lastHomeScore = null, lastPlayText = null;
+let recentScoring = [], playerPoints = {}, playerTeam = {}, playFeedItems = [], graphHistory = [];
 
 const playerImages = {
-  "Joel Embiid": "https://cdn.nba.com/headshots/nba/latest/1040x760/203954.png",
-  "Tyrese Maxey": "https://cdn.nba.com/headshots/nba/latest/1040x760/1630178.png",
-  "Kelly Oubre": "https://cdn.nba.com/headshots/nba/latest/1040x760/1626162.png",
-  "Jalen Brunson": "https://cdn.nba.com/headshots/nba/latest/1040x760/1628973.png",
-  "Josh Hart": "https://cdn.nba.com/headshots/nba/latest/1040x760/1628404.png",
-  "OG Anunoby": "https://cdn.nba.com/headshots/nba/latest/1040x760/1628384.png",
-  "Karl-Anthony Towns": "https://cdn.nba.com/headshots/nba/latest/1040x760/1626157.png"
+  // Thunder
+  "Gilgeous-Alexander": "https://cdn.nba.com/headshots/nba/latest/1040x760/1628983.png",
+  "Holmgren":           "https://cdn.nba.com/headshots/nba/latest/1040x760/1641726.png",
+  "Williams":           "https://cdn.nba.com/headshots/nba/latest/1040x760/1631114.png",
+  "Wallace":            "https://cdn.nba.com/headshots/nba/latest/1040x760/1641724.png",
+  "Dort":               "https://cdn.nba.com/headshots/nba/latest/1040x760/1629652.png",
+  // Spurs
+  "Wembanyama":         "https://cdn.nba.com/headshots/nba/latest/1040x760/1641705.png",
+  "Johnson":            "https://cdn.nba.com/headshots/nba/latest/1040x760/1631217.png",
+  "Castle":             "https://cdn.nba.com/headshots/nba/latest/1040x760/1642355.png",
+  "Jones":              "https://cdn.nba.com/headshots/nba/latest/1040x760/1629630.png",
+  "Vassell":            "https://cdn.nba.com/headshots/nba/latest/1040x760/1630170.png",
 };
 
-function setText(id, text) {
-  const el = document.getElementById(id);
-  if (el) el.innerText = text;
+const okcPlayers = ["Gilgeous-Alexander","Holmgren","Williams","Wallace","Dort"];
+const sasPlayers = ["Wembanyama","Johnson","Castle","Jones","Vassell"];
+
+const playTypeConfig = {
+  "3PT":      { label:"3PT",       cls:"score",    icon:"🎯" },
+  "DUNK":     { label:"DUNK",      cls:"score",    icon:"🔨" },
+  "ALLEY OOP":{ label:"ALLEY OOP", cls:"score",    icon:"🚀" },
+  "AND-1":    { label:"AND-1",     cls:"score",    icon:"🔥" },
+  "2PT":      { label:"2PT",       cls:"score",    icon:"🏀" },
+  "FT":       { label:"FT",        cls:"",         icon:"🎯" },
+  "BLOCK":    { label:"BLOCK",     cls:"defense",  icon:"✋" },
+  "STEAL":    { label:"STEAL",     cls:"defense",  icon:"💨" },
+  "TURNOVER": { label:"TURNOVER",  cls:"turnover", icon:"❌" },
+  "FOUL":     { label:"FOUL",      cls:"turnover", icon:"🚫" },
+  "TIMEOUT":  { label:"TIMEOUT",   cls:"",         icon:"⏱" },
+  "PLAY":     { label:"PLAY",      cls:"",         icon:"▶" },
+};
+
+function formatClock(raw) {
+  if (!raw || raw === "--") return "--";
+  // NBA sends "PT12M34.56S" format
+  const m = raw.match(/PT(\d+)M([\d.]+)S/);
+  if (!m) return raw;
+  const mins = m[1];
+  const secs = Math.floor(parseFloat(m[2])).toString().padStart(2, "0");
+  return `${mins}:${secs}`;
 }
 
-function getQuarterText(period) {
-  if (period === 0) return "Pregame";
-  if (period === 1) return "1st";
-  if (period === 2) return "2nd";
-  if (period === 3) return "3rd";
-  if (period === 4) return "4th";
-  if (period > 4) return `OT${period - 4}`;
-  return "--";
-}
+function setText(id, text) { const el=document.getElementById(id); if(el) el.innerText=text; }
+function getQuarterText(p) { if(p===0)return"Pregame"; if(p===1)return"1st"; if(p===2)return"2nd"; if(p===3)return"3rd"; if(p===4)return"4th"; return`OT${p-4}`; }
 
 function flashTeam(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.remove("flash");
-  void el.offsetWidth;
-  el.classList.add("flash");
+  const el=document.getElementById(id); if(!el)return;
+  el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
 }
 
 function pulseBall() {
-  const ball = document.getElementById("ball");
-  ball.classList.remove("pulse");
-  void ball.offsetWidth;
-  ball.classList.add("pulse");
+  const b=document.getElementById("ball");
+  b.classList.remove("pulse"); void b.offsetWidth; b.classList.add("pulse");
 }
 
 function setActionSide(side) {
-  const ball = document.getElementById("ball");
-  const glowAway = document.getElementById("glowAway");
-  const glowHome = document.getElementById("glowHome");
-
-  glowAway.classList.remove("active");
-  glowHome.classList.remove("active");
-
-  if (side === "away") {
-    ball.style.left = "22%";
-    ball.style.top = "50%";
-    glowAway.classList.add("active");
-    setText("possessionLabel", "PHI LIVE ACTION");
-  } else if (side === "home") {
-    ball.style.left = "78%";
-    ball.style.top = "50%";
-    glowHome.classList.add("active");
-    setText("possessionLabel", "NYK LIVE ACTION");
+  const ball=document.getElementById("ball");
+  document.getElementById("glowAway").classList.remove("active");
+  document.getElementById("glowHome").classList.remove("active");
+  if(side==="away") {
+    ball.style.left="22%"; ball.style.top="50%";
+    document.getElementById("glowAway").classList.add("active");
+    setText("possessionLabel","OKC LIVE ACTION");
+  } else if(side==="home") {
+    ball.style.left="78%"; ball.style.top="50%";
+    document.getElementById("glowHome").classList.add("active");
+    setText("possessionLabel","SAS LIVE ACTION");
   } else {
-    ball.style.left = "50%";
-    ball.style.top = "50%";
-    setText("possessionLabel", "PREGAME FLOW");
+    ball.style.left="50%"; ball.style.top="50%";
+    setText("possessionLabel","LIVE");
   }
-
   pulseBall();
 }
 
 function showPopup(text) {
-  const popup = document.getElementById("scorePopup");
-  popup.innerText = text;
-  popup.classList.remove("show");
-  void popup.offsetWidth;
-  popup.classList.add("show");
+  const p=document.getElementById("scorePopup");
+  p.innerText=text; p.classList.remove("show"); void p.offsetWidth; p.classList.add("show");
 }
 
-function findPlayerName(playText) {
-  if (!playText) return null;
-  const knownPlayers = Object.keys(playerImages);
-  return knownPlayers.find(name => playText.toLowerCase().includes(name.toLowerCase())) || null;
+function findPlayer(text) {
+  if(!text)return null;
+  const t=text.toLowerCase();
+  return [...okcPlayers,...sasPlayers].find(n=>t.includes(n.toLowerCase()))||null;
 }
 
-function updateHeadshot(playerName) {
-  const img = document.getElementById("headshot");
-  if (playerName && playerImages[playerName]) {
-    img.src = playerImages[playerName];
-  } else {
-    img.removeAttribute("src");
-  }
+function updateHeadshot(player) {
+  const img=document.getElementById("headshot");
+  if(player&&playerImages[player]) img.src=playerImages[player];
+  else img.removeAttribute("src");
+}
+
+function addPlayFeedItem(playType, description, side) {
+  const cfg=playTypeConfig[playType]||playTypeConfig["PLAY"];
+  playFeedItems.unshift({cfg,description,side});
+  if(playFeedItems.length>4) playFeedItems.pop();
+  document.getElementById("playFeed").innerHTML=playFeedItems.map(item=>`
+    <div class="play-row ${item.side}">
+      <span class="play-tag ${item.cfg.cls}">${item.cfg.label}</span>
+      <span class="play-desc">${item.description}</span>
+    </div>`).join("");
+}
+
+function inferPoints(text,diff) {
+  if(!text)return diff||2;
+  const t=text.toLowerCase();
+  if(t.includes("3pt")||t.includes("three"))return 3;
+  if(t.includes("free throw"))return 1;
+  if(diff>0)return diff;
+  return 2;
+}
+
+function recordScore(team,points,text) {
+  recentScoring.push({team,points});
+  if(recentScoring.length>8)recentScoring.shift();
+  const player=findPlayer(text);
+  if(player){ playerPoints[player]=(playerPoints[player]||0)+points; playerTeam[player]=team; }
+  updateMomentum(); updateTopScorers();
+}
+
+function updateMomentum() {
+  let a=0,h=0;
+  recentScoring.forEach(s=>{if(s.team==="away")a+=s.points;else h+=s.points;});
+  const diff=a-h;
+  const fill=document.getElementById("momentumFill");
+  let w=50+diff*5; w=Math.max(8,Math.min(92,w));
+  fill.style.width=w+"%";
+  if(diff>0){ setText("momentumTitle","🔥 OKC Run"); setText("momentumSub",`OKC ${a}-${h} in last 8 plays`); fill.style.background="linear-gradient(90deg,var(--thunder),var(--terminal))"; }
+  else if(diff<0){ setText("momentumTitle","🔥 SAS Run"); setText("momentumSub",`SAS ${h}-${a} in last 8 plays`); fill.style.background="linear-gradient(90deg,var(--spurs),#888)"; }
+  else{ setText("momentumTitle","Even"); setText("momentumSub",`OKC ${a} - SAS ${h} recent scoring`); }
+}
+
+function updateTopScorers() {
+  const leaders=Object.entries(playerPoints).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const el=document.getElementById("topScorers");
+  if(!leaders.length){ el.innerHTML=`<div class="scorer-row"><span>Awaiting data</span><span>--</span></div>`; return; }
+  el.innerHTML=leaders.map(([name,pts])=>{
+    const team=playerTeam[name]==="away"?"okc":"sas";
+    const abbr=team==="okc"?"OKC":"SAS";
+    return`<div class="scorer-row"><span>${name}<span class="scorer-team ${team}">${abbr}</span></span><span>${pts}</span></div>`;
+  }).join("");
+}
+
+function updateClutchFactor(period,awayScore,homeScore) {
+  const margin=Math.abs(awayScore-homeScore);
+  const isLive=awayScore+homeScore>0;
+  let factor=0;
+  if(isLive&&period>=3){ const qp=period>=4?1:0.6; const cl=Math.max(0,1-margin/15); factor=Math.round(cl*qp*100); }
+  document.getElementById("clutchFill").style.width=factor+"%";
+  if(factor>=80){ setText("clutchLabel",`🚨 EXTREME (${factor}%)`); setText("clutchSub","One-possession game, late clock"); }
+  else if(factor>=50){ setText("clutchLabel",`⚡ HIGH (${factor}%)`); setText("clutchSub","Close game in second half"); }
+  else if(factor>0){ setText("clutchLabel",`${factor}%`); setText("clutchSub","Clutch factor rises late in close games"); }
+  else{ setText("clutchLabel","—"); setText("clutchSub","Activates in second half"); }
+  const late=period>=4; const close=margin<=5;
+  if(late&&close&&isLive){ document.body.classList.add("clutch"); setText("liveBadge","CLUTCH"); }
+  else{ document.body.classList.remove("clutch"); setText("liveBadge",isLive?"LIVE":"PREGAME"); }
+}
+
+function updateGraph(away, home) {
+  graphHistory.push({ away, home });
+  if (graphHistory.length > 80) graphHistory.shift();
+  const n      = graphHistory.length;
+  const diffs  = graphHistory.map(d => d.away - d.home);
+  const maxAbs = Math.max(...diffs.map(Math.abs), 1);
+  const MID    = 45;
+  const RANGE  = 38;
+  const stepX  = 400 / Math.max(n - 1, 1);
+
+  const pts = graphHistory.map((d, i) => ({
+    x: i * stepX,
+    y: MID - ((d.away - d.home) / maxAbs) * RANGE,
+    diff: d.away - d.home
+  }));
+
+  const pointStr = pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+  document.getElementById("diffLine").setAttribute("points", pointStr);
+
+  const polyAbove = pts.map(p => `${p.x.toFixed(1)},${Math.min(p.y, MID).toFixed(1)}`).join(" ");
+  document.getElementById("diffFillOKC").setAttribute("points",
+    `0,${MID} ` + polyAbove + ` ${pts[pts.length-1].x.toFixed(1)},${MID}`);
+
+  const polyBelow = pts.map(p => `${p.x.toFixed(1)},${Math.max(p.y, MID).toFixed(1)}`).join(" ");
+  document.getElementById("diffFillSAS").setAttribute("points",
+    `0,${MID} ` + polyBelow + ` ${pts[pts.length-1].x.toFixed(1)},${MID}`);
+
+  const last = pts[pts.length - 1];
+  const dot  = document.getElementById("diffDot");
+  const lbl  = document.getElementById("diffLabel");
+  dot.setAttribute("cx", last.x.toFixed(1));
+  dot.setAttribute("cy", last.y.toFixed(1));
+  dot.setAttribute("fill", last.diff > 0 ? "#007AC1" : last.diff < 0 ? "#C0C0C0" : "white");
+  dot.setAttribute("filter", last.diff > 0 ? "drop-shadow(0 0 5px #007AC1)" : last.diff < 0 ? "drop-shadow(0 0 5px #C0C0C0)" : "drop-shadow(0 0 4px white)");
+
+  const labelY = last.diff >= 0 ? last.y - 7 : last.y + 14;
+  lbl.setAttribute("x", Math.min(Math.max(last.x, 20), 375).toFixed(1));
+  lbl.setAttribute("y", labelY.toFixed(1));
+  lbl.setAttribute("fill", last.diff > 0 ? "#64c8ff" : last.diff < 0 ? "#c0c0c0" : "white");
+  lbl.textContent = last.diff === 0 ? "TIED" : last.diff > 0 ? `OKC +${last.diff}` : `SAS +${Math.abs(last.diff)}`;
+}
+
+async function updateVotes() {
+  try {
+    const r=await fetch(VOTES_URL,{cache:"no-store"});
+    const data=await r.json();
+    setText("voteQuestion",data.question||"Who scores next?");
+    const players=Object.entries(data.players||{}).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const total=data.totalVotes||0;
+    const bars=document.getElementById("voteBars");
+    if(!players.length){ bars.innerHTML=`<div class="subvalue">No votes yet — type !predict [name] in chat</div>`; }
+    else{ bars.innerHTML=players.map(([name,count])=>{ const pct=total>0?Math.round(count/total*100):0; return`<div class="vote-row"><div class="vote-name"><span>${name}</span><span>${count} (${pct}%)</span></div><div class="vote-track"><div class="vote-fill" style="width:${pct}%"></div></div></div>`; }).join(""); }
+    setText("overCount",data.overUnder.over);
+    setText("underCount",data.overUnder.under);
+    setText("totalVotes",`${data.totalVotes+data.totalOU} total votes this round`);
+  } catch(e){}
 }
 
 async function update() {
-  const now = new Date().toLocaleTimeString();
-
+  const now=new Date().toLocaleTimeString();
   try {
-    const res = await fetch(URL, { cache:"no-store" });
-    const data = await res.json();
+    const res=await fetch(FEED_URL,{cache:"no-store"});
+    const data=await res.json();
+    const period=Number(data.period||0);
+    const qText=getQuarterText(period);
+    const clockText=formatClock(data.clock);
+    const awayScore=Number(data.awayScore||0);
+    const homeScore=Number(data.homeScore||0);
+    const total=awayScore+homeScore;
 
-    const period = Number(data.period || 0);
-    const quarterText = getQuarterText(period);
-    const clockText = data.clock || "--";
+    setText("scoreA",awayScore); setText("scoreB",homeScore);
+    setText("total",total); setText("quarter",qText);
+    setText("clock",clockText); setText("updated",now);
+    if(total>0) setText("ouResult",`${total} combined pts — voting active`);
 
-    const awayScore = Number(data.awayScore || 0);
-    const homeScore = Number(data.homeScore || 0);
-    const total = awayScore + homeScore;
+    updateClutchFactor(period,awayScore,homeScore);
+    updateGraph(awayScore,homeScore);
 
-    setText("scoreA", awayScore);
-    setText("scoreB", homeScore);
-    setText("total", total);
-    setText("quarter", quarterText);
-    setText("clock", clockText);
-    setText("updated", now);
-
-    if (period === 0) {
-      setText("liveBadge", "PREGAME");
-      setText("status", "Pregame");
-      setText("statusSub", "Waiting for tipoff");
-      setText("player", "Awaiting Game Action");
-      setText("playerStat", "Player spotlight activates when play-by-play starts");
-      setText("lastPlaySmall", "Awaiting action");
-      setActionSide(null);
-    } else {
-      setText("liveBadge", "LIVE");
-      setText("status", "In Progress");
-      setText("statusSub", "Live NBA feed connected");
+    if(lastAwayScore!==null&&awayScore>lastAwayScore){
+      const diff=awayScore-lastAwayScore;
+      flashTeam("teamABox"); setActionSide("away");
+      showPopup(`OKC +${diff}`);
+      recordScore("away",inferPoints(data.lastPlay,diff),data.lastPlay);
+    }
+    if(lastHomeScore!==null&&homeScore>lastHomeScore){
+      const diff=homeScore-lastHomeScore;
+      flashTeam("teamBBox"); setActionSide("home");
+      showPopup(`SAS +${diff}`);
+      recordScore("home",inferPoints(data.lastPlay,diff),data.lastPlay);
     }
 
-    if (lastAwayScore !== null && awayScore > lastAwayScore) {
-      const diff = awayScore - lastAwayScore;
-      setText("scoreAlert", `${AWAY_ABBR} +${diff}`);
-      flashTeam("teamABox");
-      setActionSide("away");
-      showPopup(`${AWAY_ABBR} +${diff}`);
+    if(data.actionTeam) setActionSide(data.actionTeam);
+
+    if(data.lastPlay&&data.lastPlay!==lastPlayText){
+      const player=findPlayer(data.lastPlay);
+      const playType=data.playType||"PLAY";
+      const side=data.actionTeam==="away"?"okc":data.actionTeam==="home"?"sas":"";
+      setText("player",player||"Latest Play");
+      setText("playerStat",data.lastPlay);
+      setText("playTypeBadge",(playTypeConfig[playType]?.icon||"")+" "+playType);
+      updateHeadshot(player);
+      addPlayFeedItem(playType,data.lastPlay,side);
+      if(period!==0) showPopup(data.lastPlay);
+      lastPlayText=data.lastPlay;
     }
 
-    if (lastHomeScore !== null && homeScore > lastHomeScore) {
-      const diff = homeScore - lastHomeScore;
-      setText("scoreAlert", `${HOME_ABBR} +${diff}`);
-      flashTeam("teamBBox");
-      setActionSide("home");
-      showPopup(`${HOME_ABBR} +${diff}`);
-    }
+    setText("status",period===0?"Pregame":"In Progress");
+    setText("statusSub",period===0?"Waiting for tipoff":"Live NBA feed connected");
+    setText("ticker",`THE SPORTS TERMINAL • OKC ${awayScore} – SAS ${homeScore} • ${qText} ${clockText} • ${document.getElementById("momentumTitle").innerText} • CLUTCH: ${document.getElementById("clutchLabel").innerText} • TYPE !predict [player] !over !under IN CHAT • UPDATED ${now}`);
 
-    if (data.actionTeam) {
-      setActionSide(data.actionTeam);
-    }
-
-    if (data.lastPlay && data.lastPlay !== lastPlayText) {
-      const playerName = findPlayerName(data.lastPlay);
-
-      setText("lastPlaySmall", data.lastPlay);
-      setText("player", playerName || "Latest Play");
-      setText("playerStat", data.lastPlay);
-      updateHeadshot(playerName);
-
-      if (period !== 0) {
-        showPopup(data.lastPlay);
-      }
-
-      lastPlayText = data.lastPlay;
-    }
-
-    setText(
-      "ticker",
-      `THE SPORTS TERMINAL • ${AWAY_ABBR} ${awayScore} - ${HOME_ABBR} ${homeScore} • ${quarterText} • ${clockText} • TOTAL ${total} • UPDATED ${now} • ${data.lastPlay || "AWAITING LIVE PLAY-BY-PLAY"}`
-    );
-
-    lastAwayScore = awayScore;
-    lastHomeScore = homeScore;
-
-  } catch (e) {
-    setText("liveBadge", "WAITING");
-    setText("status", "Pregame");
-    setText("statusSub", "Waiting for game feed");
-    setText("updated", now);
+    lastAwayScore=awayScore; lastHomeScore=homeScore;
+  } catch(e) {
+    setText("liveBadge","WAITING");
+    setText("status","Feed Offline");
+    setText("statusSub","Check backend server");
   }
 }
 
 update();
-setInterval(update, 3000);
+setInterval(update,3000);
+setInterval(updateVotes,5000);
 </script>
-
 </body>
 </html>
