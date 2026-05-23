@@ -1,737 +1,884 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8" />
-<title>Sports Terminal | Thunder vs Spurs</title>
-
+<meta charset="UTF-8"/>
+<title>Sports Terminal | Knicks vs Cavaliers</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --bg:#050607;
+:root{
+  --nyk:#006BB6;
+  --nyk-light:#64b5ff;
+  --cle:#6f263d;
+  --cle-light:#ffb81c;
+  --bg:#07090d;
+  --surface:rgba(255,255,255,.045);
+  --border:rgba(255,255,255,.07);
   --terminal:#00ffcc;
-  --muted:#9ea7b3;
-  --danger:#ff4d6d;
-  --thunder:#007AC1;
-  --thunderOrange:#EF3B24;
-  --spurs:#C0C0C0;
-  --spursBlack:#1a1a1a;
+  --danger:#ff3d5a;
+  --green:#00e676;
+  --text:#e8edf2;
+  --muted:#3d4a5c;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  width:100vw;height:100vh;overflow:hidden;
+  background:var(--bg);
+  font-family:'Barlow Condensed',sans-serif;
+  color:var(--text);
+  display:flex;flex-direction:column;
 }
 
-* { box-sizing:border-box; }
+/* ── HEADER ── */
+.hdr{
+  height:56px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;
+  background:rgba(0,0,0,.7);
+  border-bottom:1px solid var(--border);
+}
+.brand{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--terminal);}
+.series-wrap{display:flex;align-items:center;gap:8px;margin-left:16px;}
+.series-lbl{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.5px;}
+.series-boxes{display:flex;gap:5px;}
+.gbox{
+  width:34px;height:34px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:900;letter-spacing:.5px;
+}
+.gbox.nyk{background:rgba(0,107,182,.4);border:1px solid var(--nyk);color:var(--nyk-light);}
+.gbox.cur{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.4);}
+.hdr-right{display:flex;align-items:center;gap:10px;}
+.live-pill{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 14px;border-radius:999px;
+  background:rgba(255,61,90,.1);border:1px solid rgba(255,61,90,.4);
+  font-size:13px;font-weight:900;color:var(--danger);letter-spacing:1px;
+}
+.live-pill::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--danger);animation:lp 1.4s infinite;}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(1.5);}}
+.vote-pill{
+  padding:5px 14px;border-radius:999px;
+  background:rgba(0,255,204,.06);border:1px solid rgba(0,255,204,.18);
+  font-size:12px;font-weight:700;color:var(--terminal);
+}
+.hdr-logo{width:38px;height:38px;object-fit:cover;border-radius:7px;border:1px solid var(--border);}
 
-body {
-  margin:0;
-  width:100vw;
-  height:100vh;
+/* ── LAYOUT ── */
+.main{
+  flex:1;display:grid;
+  grid-template-columns:340px 1fr 380px;
+  min-height:0;overflow:hidden;
+}
+
+/* ══════════════════════
+   LEFT
+══════════════════════ */
+.left{
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
   overflow:hidden;
-  background:
-    radial-gradient(circle at 18% 10%, rgba(0,122,193,.36), transparent 30%),
-    radial-gradient(circle at 82% 8%, rgba(26,26,26,.6), transparent 34%),
-    linear-gradient(180deg,#111419 0%,#050607 58%,#000 100%);
-  color:white;
-  font-family:Arial, Helvetica, sans-serif;
 }
+.sec{padding:14px 16px;border-bottom:1px solid var(--border);}
+.sec-hdr{font-size:10px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
 
-.topbar {
-  height:72px; padding:0 16px;
-  display:flex; justify-content:space-between; align-items:center;
-  background:rgba(0,0,0,.52);
-  border-bottom:1px solid rgba(0,255,204,.18);
-}
-.brand { color:var(--terminal); font-weight:900; font-size:24px; letter-spacing:1.4px; }
-.subtitle { color:#b9c6d4; font-size:11px; font-weight:700; margin-top:3px; }
-.topbar-right { display:flex; align-items:center; gap:8px; }
-.live-badge {
-  padding:6px 14px; border-radius:999px;
-  color:var(--danger); background:rgba(255,77,109,.12);
-  border:1px solid rgba(255,77,109,.55); font-weight:900; font-size:12px;
-  white-space:nowrap;
-}
-.vote-cmd {
-  padding:6px 10px; border-radius:999px;
-  color:var(--terminal); background:rgba(0,255,204,.08);
-  border:1px solid rgba(0,255,204,.3); font-size:10px; font-weight:900; letter-spacing:.3px;
-  white-space:nowrap;
-}
-.logo { width:46px; height:46px; object-fit:cover; border-radius:8px; }
-
-.main {
-  display:grid; grid-template-columns:290px 1fr 290px;
-  height:calc(100vh - 72px - 38px);
-  gap:12px; padding:12px 16px 8px;
-}
-
-.side { display:flex; flex-direction:column; gap:10px; }
-.card {
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.11);
-  border-radius:16px; padding:13px 14px;
-}
-.card.feature { border-color:rgba(0,255,204,.22); background:rgba(0,255,204,.05); }
-.card.okc { border-color:rgba(0,122,193,.4); background:rgba(0,122,193,.08); }
-.card.sas { border-color:rgba(192,192,192,.25); background:rgba(192,192,192,.05); }
-.label {
-  font-size:10px; color:var(--muted);
-  text-transform:uppercase; letter-spacing:1px; font-weight:900; margin-bottom:6px;
-}
-.value { font-size:20px; font-weight:900; }
-.subvalue { margin-top:5px; color:#b9c6d4; font-size:12px; line-height:1.35; }
-
-.play-feed { display:flex; flex-direction:column; gap:4px; max-height:148px; overflow:hidden; }
-.play-row {
-  display:flex; align-items:center; gap:6px;
-  padding:4px 8px; border-radius:8px;
+/* Play feed */
+.feed-wrap{flex:1;overflow:hidden;padding:14px 16px;display:flex;flex-direction:column;gap:0;}
+.feed-hdr{font-size:10px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.feed-items{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:6px;}
+.feed-item{
+  padding:10px 12px;border-radius:10px;
   background:rgba(255,255,255,.04);
-  border-left:3px solid rgba(255,255,255,.15);
-  font-size:11px; font-weight:800;
-  animation: fadeIn .4s ease;
+  border-left:3px solid rgba(255,255,255,.1);
+  animation:slideIn .4s cubic-bezier(.2,0,.2,1);
   overflow:hidden;
 }
-.play-row.okc { border-left-color: var(--thunder); }
-.play-row.sas { border-left-color: var(--spurs); }
-.play-tag {
-  font-size:9px; font-weight:900; letter-spacing:.6px;
-  padding:2px 5px; border-radius:4px;
-  background:rgba(0,255,204,.12); color:var(--terminal);
-  white-space:nowrap; flex-shrink:0; font-style:normal;
-  line-height:1.4;
+.feed-item.nyk{border-left-color:var(--nyk);}
+.feed-item.cle{border-left-color:var(--cle-light);}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:none;}}
+.fi-tag{
+  display:inline-block;font-size:10px;font-weight:900;letter-spacing:.8px;
+  padding:2px 8px;border-radius:4px;margin-bottom:4px;
 }
-.play-tag.score { background:rgba(0,122,193,.2); color:#64c8ff; }
-.play-tag.turnover { background:rgba(255,77,109,.15); color:#ff4d6d; }
-.play-tag.defense { background:rgba(192,192,192,.15); color:#c0c0c0; }
-.play-desc { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:10px; flex:1; }
-@keyframes fadeIn { from { opacity:0; transform:translateX(-6px); } to { opacity:1; transform:none; } }
+.fi-tag.score{background:rgba(0,255,204,.12);color:var(--terminal);}
+.fi-tag.defense{background:rgba(100,181,255,.12);color:var(--nyk-light);}
+.fi-tag.turnover{background:rgba(255,61,90,.12);color:var(--danger);}
+.fi-tag.default{background:rgba(255,255,255,.07);color:var(--muted);}
+.fi-desc{font-size:14px;font-weight:700;color:var(--text);line-height:1.3;}
 
-.momentum-bar {
-  width:100%; height:10px; margin-top:10px;
-  background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden;
+/* Run box */
+.run-box{
+  margin:14px 16px;padding:12px 14px;border-radius:10px;
+  background:var(--surface);border:1px solid var(--border);
+  text-align:center;transition:.5s;
 }
-.momentum-fill {
-  height:100%; width:50%; border-radius:999px;
-  background:linear-gradient(90deg, var(--thunder), var(--terminal));
-  transition:.6s ease;
-}
-.momentum-labels {
-  display:flex; justify-content:space-between;
-  font-size:10px; font-weight:900; margin-top:4px; color:var(--muted);
-}
+.run-box.nyk{background:rgba(0,107,182,.12);border-color:rgba(0,107,182,.4);}
+.run-box.cle{background:rgba(255,184,28,.08);border-color:rgba(255,184,28,.3);}
+.run-num{font-family:'Bebas Neue',sans-serif;font-size:48px;line-height:1;display:block;}
+.run-lbl{font-size:12px;font-weight:700;color:var(--muted);margin-top:2px;}
 
-.vote-bars { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
-.vote-row { display:flex; flex-direction:column; gap:2px; }
-.vote-name { font-size:11px; font-weight:900; display:flex; justify-content:space-between; }
-.vote-track { width:100%; height:8px; background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden; }
-.vote-fill { height:100%; border-radius:999px; background:linear-gradient(90deg, var(--terminal), var(--thunder)); transition: width .5s ease; }
-.ou-row { display:flex; gap:8px; margin-top:8px; }
-.ou-box { flex:1; padding:8px; border-radius:10px; text-align:center; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); }
-.ou-label { font-size:10px; font-weight:900; color:var(--muted); margin-bottom:3px; }
-.ou-count { font-size:18px; font-weight:900; }
-.ou-box.over { border-color:rgba(0,255,204,.3); }
-.ou-box.under { border-color:rgba(255,77,109,.3); }
-.ou-box.over .ou-count { color:var(--terminal); }
-.ou-box.under .ou-count { color:var(--danger); }
+/* Top scorers */
+.scorer-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);
+}
+.scorer-row:last-child{border-bottom:0;}
+.sr-name{font-size:15px;font-weight:700;}
+.sr-team{font-size:10px;font-weight:900;margin-left:5px;vertical-align:middle;}
+.sr-pts{font-family:'Bebas Neue',sans-serif;font-size:26px;}
 
-.center {
-  display:flex; flex-direction:column; align-items:center;
-  justify-content:flex-start; position:relative; padding-top:6px;
+/* ══════════════════════
+   CENTER
+══════════════════════ */
+.center{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;
+  padding:20px 24px;gap:14px;
+  position:relative;overflow:hidden;
 }
 
-.clutch-banner {
-  width:88%; margin-bottom:8px; display:none; text-align:center;
-  padding:8px 18px; border-radius:999px; color:#fff;
-  background:rgba(255,77,109,.18); border:1px solid rgba(255,77,109,.55);
-  font-weight:900; letter-spacing:1.5px; box-shadow:0 0 32px rgba(255,77,109,.28);
+/* Score block */
+.score-block{
+  display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;gap:16px;width:100%;
 }
-body.clutch .clutch-banner { display:block; }
-body.clutch .topbar, body.clutch .scoreboard { box-shadow:0 0 36px rgba(255,77,109,.25); }
-body.clutch .live-badge { animation:clutchPulse 1.2s infinite; }
-@keyframes clutchPulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.08); box-shadow:0 0 28px rgba(255,77,109,.65); } }
+.team-col{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.team-logo{width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 0 24px rgba(255,255,255,.15));}
+.team-abbr{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;}
+.team-abbr.nyk{color:var(--nyk-light);}
+.team-abbr.cle{color:var(--cle-light);}
+.team-score{font-family:'Bebas Neue',sans-serif;font-size:150px;line-height:.85;}
+.team-score.nyk{color:#fff;text-shadow:0 0 60px rgba(0,107,182,.5);}
+.team-score.cle{color:#fff;text-shadow:0 0 60px rgba(255,184,28,.35);}
+.team-score.bump{animation:bump .35s ease;}
+@keyframes bump{0%{transform:scale(1);}45%{transform:scale(1.12);}100%{transform:scale(1);}}
+.score-mid{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.sm-vs{font-size:16px;font-weight:700;color:var(--muted);}
+.sm-qtr{font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--terminal);line-height:1;}
+.sm-clk{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;}
+.sm-tot{font-size:11px;color:var(--muted);font-weight:700;margin-top:4px;}
 
-.court-wrap { width:90%; margin-bottom:12px; }
-.court-label {
-  display:flex; justify-content:space-between;
-  color:#b9c6d4; font-size:10px; font-weight:900;
-  letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;
-}
-.court {
-  height:140px; border-radius:18px; position:relative; overflow:hidden;
-  background:
-    linear-gradient(90deg, rgba(0,122,193,.28), transparent 48%, rgba(26,26,26,.6)),
-    radial-gradient(circle at center, rgba(255,255,255,.07), transparent 18%),
-    rgba(255,255,255,.04);
-  border:2px solid rgba(255,255,255,.12);
-}
-.court:before {
-  content:""; position:absolute; inset:0;
-  background:
-    linear-gradient(90deg, transparent 49.8%, rgba(255,255,255,.2) 50%, transparent 50.2%),
-    radial-gradient(circle at center, transparent 0 42px, rgba(255,255,255,.18) 43px 45px, transparent 46px);
-}
-.hoop { position:absolute; top:50%; width:36px; height:64px; transform:translateY(-50%); border:2px solid rgba(255,255,255,.2); }
-.hoop.left { left:14px; border-left:0; }
-.hoop.right { right:14px; border-right:0; }
-.possession-glow { position:absolute; top:0; bottom:0; width:48%; opacity:0; transition:.5s ease; pointer-events:none; }
-.possession-glow.left { left:0; background:linear-gradient(90deg, rgba(0,122,193,.55), transparent); }
-.possession-glow.right { right:0; background:linear-gradient(270deg, rgba(192,192,192,.35), transparent); }
-.possession-glow.active { opacity:1; }
-.ball {
-  width:28px; height:28px;
-  background:radial-gradient(circle at 35% 28%, #ffd08a, #f28c28 42%, #b65212 78%);
-  border-radius:50%; position:absolute; top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  transition:left .7s ease, top .7s ease;
-  box-shadow:0 0 20px rgba(242,140,40,.85); z-index:5;
-}
-.ball.pulse { animation:ballPulse .8s ease; }
-@keyframes ballPulse { 0%,100% { transform:translate(-50%,-50%) scale(1); } 50% { transform:translate(-50%,-50%) scale(1.4); } }
+/* Diff bar */
+.diff-wrap{width:100%;}
+.diff-labels{display:flex;justify-content:space-between;font-size:10px;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.diff-bar{width:100%;height:10px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;position:relative;}
+.diff-fill{position:absolute;height:100%;border-radius:999px;transition:all .8s ease;}
+.diff-nyk{left:0;background:linear-gradient(90deg,var(--nyk),var(--nyk-light));}
+.diff-cle{right:0;background:linear-gradient(270deg,var(--cle),var(--cle-light));}
+.diff-center{position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:2px;height:14px;background:rgba(255,255,255,.4);border-radius:999px;}
+.diff-text{text-align:center;font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--muted);margin-top:4px;}
 
-.scoreboard {
-  display:grid; grid-template-columns:1fr 80px 1fr;
-  width:90%; align-items:center; gap:10px;
-}
-.team {
-  text-align:center; padding:18px 14px; border-radius:20px;
-  min-height:160px; display:flex; flex-direction:column;
-  justify-content:center; border:1px solid rgba(255,255,255,.16);
-  box-shadow:0 16px 40px rgba(0,0,0,.3); transition:.25s;
-}
-.thunder-team { background:linear-gradient(135deg,#004f8a,#001f3d); }
-.spurs-team   { background:linear-gradient(135deg,#2a2a2a,#050505); }
-.flash { animation:scoreFlash 1s ease; }
-@keyframes scoreFlash {
-  0%   { transform:scale(1); box-shadow:0 0 0 rgba(0,255,204,0); }
-  40%  { transform:scale(1.04); box-shadow:0 0 45px rgba(0,255,204,.75); }
-  100% { transform:scale(1); }
-}
-.team-abbr { font-size:36px; font-weight:900; }
-.team-full { color:rgba(255,255,255,.8); font-size:12px; font-weight:800; text-transform:uppercase; margin-top:3px; }
-.score { font-size:76px; font-weight:900; line-height:.95; margin-top:12px; }
-.vs { text-align:center; font-size:26px; font-weight:900; color:var(--terminal); text-shadow:0 0 18px rgba(0,255,204,.45); }
+/* Momentum */
+.mom-wrap{width:100%;}
+.mom-header{display:flex;justify-content:space-between;font-size:10px;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.mom-val{color:var(--text) !important;}
+.mom-bar{width:100%;height:8px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;}
+.mom-fill{height:100%;width:50%;border-radius:999px;transition:.8s ease;}
 
-.graph-wrap { width:90%; margin-top:10px; }
-.graph-title { font-size:10px; font-weight:900; letter-spacing:1px; color:var(--muted); text-transform:uppercase; margin-bottom:5px; display:flex; justify-content:space-between; }
-#momentumGraph { width:100%; height:110px; display:block; }
-
-.spotlight {
-  margin-top:10px; width:90%;
-  display:grid; grid-template-columns:70px 1fr auto;
-  gap:12px; align-items:center; padding:12px 14px;
-  border-radius:16px; background:rgba(0,0,0,.42);
-  border:1px solid rgba(0,255,204,.16);
-}
-.headshot { width:60px; height:60px; border-radius:12px; object-fit:cover; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); }
-.spotlight-name { font-size:21px; font-weight:900; }
-.play-type-badge {
-  padding:8px 12px; border-radius:999px; font-weight:900; font-size:12px;
-  background:rgba(0,255,204,.12); border:1px solid rgba(0,255,204,.3);
-  color:var(--terminal); min-width:90px; text-align:center;
+/* Matchup tracker */
+.matchup{width:100%;padding:12px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--border);}
+.matchup-hdr{font-size:10px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;text-align:center;}
+.matchup-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;}
+.matchup-player{display:flex;flex-direction:column;gap:4px;}
+.matchup-player.right{align-items:flex-end;}
+.mp-img{width:52px;height:52px;border-radius:9px;object-fit:cover;border:2px solid rgba(255,255,255,.1);}
+.mp-name{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1;}
+.mp-name.nyk{color:var(--nyk-light);}
+.mp-name.cle{color:var(--cle-light);}
+.mp-stats{font-size:12px;font-weight:700;color:var(--muted);}
+.mp-pts{font-family:'Bebas Neue',sans-serif;font-size:40px;line-height:1;}
+.matchup-vs{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--muted);text-align:center;}
+.matchup-verdict{
+  text-align:center;margin-top:8px;padding:6px;border-radius:7px;
+  font-size:13px;font-weight:700;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--text);
 }
 
-.score-popup {
-  position:absolute; top:180px; left:50%; transform:translateX(-50%);
-  padding:14px 24px; border-radius:18px;
-  background:rgba(0,0,0,.88); border:1px solid rgba(0,255,204,.4);
-  box-shadow:0 0 45px rgba(0,255,204,.35);
-  font-size:22px; font-weight:900;
-  opacity:0; pointer-events:none; z-index:30;
+/* Roast */
+.roast{
+  position:fixed;bottom:50px;left:50%;transform:translateX(-50%);
+  z-index:50;padding:12px 28px;border-radius:999px;
+  background:rgba(0,0,0,.92);border:1px solid rgba(0,255,204,.4);
+  font-size:18px;font-weight:700;color:#fff;white-space:nowrap;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;
+  text-align:center;
+  max-width:800px;white-space:normal;text-align:center;
 }
-.score-popup.show { animation:popupFloat 2.5s ease; }
-@keyframes popupFloat {
-  0%   { opacity:0; transform:translate(-50%,20px) scale(.95); }
-  15%  { opacity:1; transform:translate(-50%,0) scale(1); }
-  75%  { opacity:1; transform:translate(-50%,-10px) scale(1); }
-  100% { opacity:0; transform:translate(-50%,-35px) scale(.96); }
-}
+.roast.on{opacity:1;}
+.roast span{color:var(--terminal);}
 
-.ticker {
-  position:absolute; left:16px; right:16px; bottom:8px;
-  height:30px; border-radius:999px; overflow:hidden;
-  background:rgba(0,255,204,.07); border:1px solid rgba(0,255,204,.14);
-  color:var(--terminal); display:flex; align-items:center;
-  font-weight:900; font-size:13px; white-space:nowrap;
+/* Score overlay */
+.score-overlay{
+  position:fixed;inset:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
 }
-.ticker-track { display:inline-block; padding-left:100%; animation:scrollTicker 55s linear infinite; }
-@keyframes scrollTicker { 0% { transform:translateX(0); } 100% { transform:translateX(-100%); } }
+.score-overlay.show{opacity:1;}
+.so-bg{position:absolute;inset:0;}
+.so-content{position:relative;z-index:2;text-align:center;}
+.so-img{width:110px;height:110px;border-radius:16px;object-fit:cover;margin-bottom:8px;border:2px solid rgba(255,255,255,.2);}
+.so-team{font-size:14px;font-weight:900;letter-spacing:3px;opacity:.7;text-transform:uppercase;}
+.so-player{font-family:'Bebas Neue',sans-serif;font-size:120px;line-height:.85;animation:sop .4s cubic-bezier(.175,.885,.32,1.275);}
+@keyframes sop{from{transform:scale(.6);opacity:0;}to{transform:scale(1);opacity:1;}}
+.so-pts{font-family:'Bebas Neue',sans-serif;font-size:56px;color:var(--terminal);}
+.so-type{font-size:14px;font-weight:900;letter-spacing:3px;color:rgba(255,255,255,.5);margin-top:6px;}
 
-.scorer-row {
-  display:flex; justify-content:space-between; padding:5px 0;
-  border-bottom:1px solid rgba(255,255,255,.07);
-  font-size:13px; font-weight:800;
+/* ══════════════════════
+   RIGHT
+══════════════════════ */
+.right{
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
 }
-.scorer-row:last-child { border-bottom:0; }
-.scorer-team { font-size:9px; font-weight:900; padding:1px 5px; border-radius:3px; margin-left:4px; vertical-align:middle; }
-.scorer-team.okc { background:rgba(0,122,193,.3); color:#64c8ff; }
-.scorer-team.sas { background:rgba(192,192,192,.2); color:#c0c0c0; }
+.rsec{padding:16px 18px;border-bottom:1px solid var(--border);}
+.rsec:last-child{border-bottom:0;}
+.rsec-hdr{font-size:11px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
 
-.clutch-meter { margin-top:8px; }
-.clutch-track { width:100%; height:8px; background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden; margin-top:6px; }
-.clutch-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#ff4d6d,#ff8c42); width:0%; transition:.8s ease; }
+/* Betting line */
+.line-teams{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.lt{padding:12px;border-radius:10px;}
+.lt.nyk{background:rgba(0,107,182,.1);border:1px solid rgba(0,107,182,.3);}
+.lt.cle{background:rgba(111,38,61,.1);border:1px solid rgba(255,184,28,.2);}
+.lt-name{font-size:13px;font-weight:900;letter-spacing:.5px;margin-bottom:4px;}
+.lt-name.nyk{color:var(--nyk-light);}
+.lt-name.cle{color:var(--cle-light);}
+.lt-spread{font-family:'Bebas Neue',sans-serif;font-size:44px;line-height:1;color:#fff;}
+.lt-ml{font-size:13px;font-weight:600;color:var(--muted);margin-top:3px;}
+.line-total{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 12px;border-radius:10px;
+  background:var(--surface);border:1px solid var(--border);margin-bottom:8px;
+}
+.lt-lbl{font-size:12px;font-weight:900;color:var(--muted);letter-spacing:1px;}
+.lt-val{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--terminal);}
+.lt-odds{font-size:12px;color:var(--muted);font-weight:600;}
+.pace-sig{
+  padding:9px 12px;border-radius:8px;
+  font-size:14px;font-weight:700;text-align:center;
+}
+.pace-sig.over{background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);color:var(--green);}
+.pace-sig.under{background:rgba(255,61,90,.08);border:1px solid rgba(255,61,90,.2);color:var(--danger);}
+.pace-sig.push{background:var(--surface);border:1px solid var(--border);color:var(--muted);}
+
+/* OU boxes */
+.ou-boxes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.ou-box{text-align:center;padding:10px;border-radius:10px;background:var(--surface);border:1px solid var(--border);}
+.ou-num{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;}
+.ou-box.over .ou-num{color:var(--terminal);}
+.ou-box.under .ou-num{color:var(--danger);}
+.ou-lbl{font-size:11px;font-weight:900;letter-spacing:.8px;color:var(--muted);}
+
+/* Vote bars */
+.vbar-row{display:flex;flex-direction:column;gap:3px;margin-bottom:6px;}
+.vbar-top{display:flex;justify-content:space-between;font-size:13px;font-weight:700;}
+.vbar-track{height:7px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;}
+.vbar-fill{height:100%;background:linear-gradient(90deg,var(--terminal),var(--nyk));border-radius:999px;transition:width .5s ease;}
+
+/* Bottom stats */
+.bstats{
+  grid-column:1/-1;border-top:1px solid var(--border);
+  display:grid;grid-template-columns:repeat(4,1fr);
+  height:72px;flex-shrink:0;
+}
+.bs{display:flex;flex-direction:column;justify-content:center;padding:0 20px;border-right:1px solid var(--border);}
+.bs:last-child{border-right:0;}
+.bs-lbl{font-size:9px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.bs-val{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;}
+.bs-sub{font-size:11px;font-weight:600;color:var(--muted);margin-top:1px;}
+
+/* Ticker */
+.ticker{
+  height:34px;flex-shrink:0;
+  background:rgba(0,255,204,.05);border-top:1px solid rgba(0,255,204,.12);
+  overflow:hidden;display:flex;align-items:center;
+  font-size:13px;font-weight:700;color:var(--terminal);letter-spacing:.5px;white-space:nowrap;
+}
+.ticker-inner{display:inline-block;padding-left:100%;animation:tick 70s linear infinite;}
+@keyframes tick{to{transform:translateX(-100%);}}
+
+/* Run flash border */
+body.nyk-run{box-shadow:inset 0 0 0 3px var(--nyk);}
+body.cle-run{box-shadow:inset 0 0 0 3px var(--cle-light);}
 </style>
 </head>
-
 <body>
 
-<div class="topbar">
-  <div>
-    <div class="brand">THE SPORTS TERMINAL</div>
-    <div class="subtitle">Thunder vs Spurs • Game 3 • Live Playoff Analysis</div>
-  </div>
-  <div class="topbar-right">
-    <div class="vote-cmd">💬 !predict [name] • !over • !under</div>
-    <div class="live-badge" id="liveBadge">LIVE</div>
-    <img src="logo.png" class="logo" />
+<!-- SCORE OVERLAY -->
+<div class="score-overlay" id="scoreOverlay">
+  <div class="so-bg" id="soBg"></div>
+  <div class="so-content">
+    <img class="so-img" id="soImg" src=""/>
+    <div class="so-team" id="soTeam"></div>
+    <div class="so-player" id="soPlayer"></div>
+    <div class="so-pts" id="soPts"></div>
+    <div class="so-type" id="soType"></div>
   </div>
 </div>
 
-<div class="main">
+<!-- ROAST -->
+<div class="roast" id="roast"></div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div style="display:flex;align-items:center;">
+    <div class="brand">SPORTS TERMINAL</div>
+    <div class="series-wrap">
+      <span class="series-lbl">SERIES</span>
+      <div class="series-boxes">
+        <div class="gbox nyk">NYK</div>
+        <div class="gbox nyk">NYK</div>
+        <div class="gbox nyk">NYK</div>
+        <div class="gbox cur">G4</div>
+      </div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="vote-pill">💬 VOTE IN CHAT: !predict · !over · !under</div>
+    <div class="live-pill" id="liveBadge">LIVE</div>
+    <img src="logo.png" class="hdr-logo"/>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" style="display:grid;grid-template-columns:340px 1fr 380px;grid-template-rows:1fr auto;flex:1;min-height:0;">
 
   <!-- LEFT -->
-  <div class="side">
-    <div class="card okc">
-      <div class="label">Series</div>
-      <div class="value" style="color:#64c8ff;">Series Tied 1-1</div>
-      <div class="subvalue">Game 3 in San Antonio</div>
-    </div>
-    <div class="card">
-      <div class="label">Status</div>
-      <div class="value" id="status">Live</div>
-      <div class="subvalue" id="statusSub">NBA feed connected</div>
-    </div>
-    <div class="card feature">
-      <div class="label">Momentum (Last 8 Plays)</div>
-      <div class="value" id="momentumTitle">Neutral</div>
-      <div class="subvalue" id="momentumSub">Activates after scoring starts</div>
-      <div class="momentum-bar">
-        <div class="momentum-fill" id="momentumFill"></div>
-      </div>
-      <div class="momentum-labels"><span>OKC</span><span>SAS</span></div>
-    </div>
-    <div class="card feature">
-      <div class="label">Clutch Factor</div>
-      <div class="value" id="clutchLabel">—</div>
-      <div class="subvalue" id="clutchSub">Based on margin + time remaining</div>
-      <div class="clutch-meter">
-        <div class="clutch-track"><div class="clutch-fill" id="clutchFill"></div></div>
+  <div class="left">
+    <div class="feed-wrap">
+      <div class="feed-hdr">Live Play Feed</div>
+      <div class="feed-items" id="feedItems">
+        <div class="feed-item"><span class="fi-tag default">LIVE</span><div class="fi-desc">Connecting to feed...</div></div>
       </div>
     </div>
-    <div class="card">
-      <div class="label">Live Play Feed</div>
-      <div class="play-feed" id="playFeed">
-        <div class="play-row"><span class="play-tag">LIVE</span><span>Connecting to feed...</span></div>
+
+    <div class="run-box" id="runBox">
+      <div class="sec-hdr" style="text-align:left;">Current Run</div>
+      <span class="run-num" id="runNum">—</span>
+      <div class="run-lbl" id="runLbl">Unanswered pts tracker</div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr">Est. Top Scorers</div>
+      <div id="topScorers">
+        <div style="font-size:13px;color:var(--muted);">Tracking from live feed</div>
       </div>
     </div>
   </div>
 
   <!-- CENTER -->
   <div class="center">
-    <div class="score-popup" id="scorePopup">SCORING PLAY</div>
-    <div class="clutch-banner" id="clutchBanner">🚨 CLUTCH TIME — ONE POSSESSION GAME</div>
 
-    <div class="court-wrap">
-      <div class="court-label">
-        <span style="color:#64c8ff;">OKC ATTACK →</span>
-        <span id="possessionLabel">LIVE</span>
-        <span style="color:#c0c0c0;">← SAS ATTACK</span>
+    <!-- Score -->
+    <div class="score-block">
+      <div class="team-col">
+        <img class="team-logo" src="https://cdn.nba.com/logos/nba/1610612752/global/L/logo.svg"/>
+        <div class="team-abbr nyk">NYK</div>
+        <div class="team-score nyk" id="scoreA">0</div>
       </div>
-      <div class="court">
-        <div class="possession-glow left" id="glowAway"></div>
-        <div class="possession-glow right" id="glowHome"></div>
-        <div class="hoop left"></div>
-        <div class="hoop right"></div>
-        <div class="ball" id="ball"></div>
+      <div class="score-mid">
+        <div class="sm-vs">VS</div>
+        <div class="sm-qtr" id="quarter">PRE</div>
+        <div class="sm-clk" id="clock">--:--</div>
+        <div class="sm-tot"><span id="total">0</span> PTS TOTAL</div>
+      </div>
+      <div class="team-col">
+        <img class="team-logo" src="https://cdn.nba.com/logos/nba/1610612739/global/L/logo.svg"/>
+        <div class="team-abbr cle">CLE</div>
+        <div class="team-score cle" id="scoreB">0</div>
       </div>
     </div>
 
-    <div class="scoreboard">
-      <div class="team thunder-team" id="teamABox">
-        <div class="team-abbr">OKC</div>
-        <div class="team-full">Oklahoma City Thunder</div>
-        <div class="score" id="scoreA">0</div>
+    <!-- Diff bar -->
+    <div class="diff-wrap">
+      <div class="diff-labels">
+        <span style="color:var(--nyk-light);">◀ NYK LEADING</span>
+        <span>POINT DIFFERENTIAL</span>
+        <span style="color:var(--cle-light);">CLE LEADING ▶</span>
       </div>
-      <div class="vs">VS</div>
-      <div class="team spurs-team" id="teamBBox">
-        <div class="team-abbr">SAS</div>
-        <div class="team-full">San Antonio Spurs</div>
-        <div class="score" id="scoreB">0</div>
+      <div class="diff-bar">
+        <div class="diff-fill diff-nyk" id="diffNYK" style="width:0;"></div>
+        <div class="diff-fill diff-cle" id="diffCLE" style="width:0;"></div>
+        <div class="diff-center"></div>
       </div>
+      <div class="diff-text" id="diffText">TIED</div>
     </div>
 
-    <div class="graph-wrap">
-      <div class="graph-title">
-        <span style="color:#64c8ff;">▲ OKC LEADING</span>
-        <span>LIVE DIFFERENTIAL</span>
-        <span style="color:#c0c0c0;">▼ SAS LEADING</span>
+    <!-- Momentum -->
+    <div class="mom-wrap">
+      <div class="mom-header">
+        <span>Momentum · Last 8</span>
+        <span class="mom-val" id="momVal">Neutral</span>
       </div>
-      <svg id="momentumGraph" viewBox="0 0 400 90" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="okcGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#007AC1" stop-opacity="0.9"/>
-            <stop offset="100%" stop-color="#007AC1" stop-opacity="0.1"/>
-          </linearGradient>
-          <linearGradient id="sasGrad" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0%" stop-color="#C0C0C0" stop-opacity="0.9"/>
-            <stop offset="100%" stop-color="#C0C0C0" stop-opacity="0.1"/>
-          </linearGradient>
-          <clipPath id="clipAbove"><rect x="0" y="0" width="400" height="45"/></clipPath>
-          <clipPath id="clipBelow"><rect x="0" y="45" width="400" height="45"/></clipPath>
-        </defs>
-        <!-- zero line -->
-        <line x1="0" y1="45" x2="400" y2="45" stroke="rgba(255,255,255,.4)" stroke-width="1" stroke-dasharray="4,4"/>
-        <!-- OKC label left -->
-        <text x="4" y="14" fill="#007AC1" font-size="8" font-weight="900" opacity="0.9">OKC +</text>
-        <!-- SAS label left -->
-        <text x="4" y="86" fill="#C0C0C0" font-size="8" font-weight="900" opacity="0.9">SAS +</text>
-        <!-- filled area above zero (OKC leading) -->
-        <polygon id="diffFillOKC" fill="url(#okcGrad)" clip-path="url(#clipAbove)" points="0,45 400,45"/>
-        <!-- filled area below zero (SAS leading) -->
-        <polygon id="diffFillSAS" fill="url(#sasGrad)" clip-path="url(#clipBelow)" points="0,45 400,45"/>
-        <!-- the wave line itself -->
-        <polyline id="diffLine" fill="none" stroke="white" stroke-width="2.5" stroke-linejoin="round" points="0,45"/>
-        <!-- current diff dot -->
-        <circle id="diffDot" cx="0" cy="45" r="5" fill="white" filter="drop-shadow(0 0 6px white)"/>
-        <!-- current diff label -->
-        <text id="diffLabel" x="0" y="0" fill="white" font-size="9" font-weight="900" text-anchor="middle"></text>
-      </svg>
+      <div class="mom-bar"><div class="mom-fill" id="momFill"></div></div>
     </div>
 
-    <div class="spotlight">
-      <img id="headshot" class="headshot" src="" />
-      <div>
-        <div class="label">Player Spotlight</div>
-        <div class="spotlight-name" id="player">Awaiting Action</div>
-        <div class="subvalue" id="playerStat">Live feed active</div>
+    <!-- Brunson vs Mitchell matchup -->
+    <div class="matchup">
+      <div class="matchup-hdr">⚔️ Star Matchup — Brunson vs Mitchell</div>
+      <div class="matchup-grid">
+        <div class="matchup-player">
+          <img class="mp-img" src="https://cdn.nba.com/headshots/nba/latest/1040x760/1628384.png"/>
+          <div class="mp-name nyk">BRUNSON</div>
+          <div class="mp-stats" id="bruStats">0 3PM · 0 TO</div>
+          <div class="mp-pts" id="bruPts" style="color:var(--nyk-light);">0</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="matchup-vs">VS</div>
+        </div>
+        <div class="matchup-player right">
+          <img class="mp-img" src="https://cdn.nba.com/headshots/nba/latest/1040x760/1628378.png"/>
+          <div class="mp-name cle">MITCHELL</div>
+          <div class="mp-stats" id="mitStats">0 3PM · 0 TO</div>
+          <div class="mp-pts" id="mitPts" style="color:var(--cle-light);">0</div>
+        </div>
       </div>
-      <div class="play-type-badge" id="playTypeBadge">LIVE</div>
+      <div class="matchup-verdict" id="matchupVerdict">Game hasn't started yet. Stay tuned.</div>
     </div>
+
   </div>
 
   <!-- RIGHT -->
-  <div class="side">
-    <div class="card feature">
-      <div class="label">Quarter / Clock</div>
-      <div class="value" id="quarter">--</div>
-      <div class="value" id="clock" style="font-size:28px;color:var(--terminal);margin-top:4px;">--</div>
-    </div>
-    <div class="card">
-      <div class="label">Total Points</div>
-      <div class="value" id="total">0</div>
-      <div class="subvalue" id="ouResult">Tracking over/under live</div>
-    </div>
-    <div class="card feature">
-      <div class="label">🗳️ Chat Predictions — Who Scores Next?</div>
-      <div class="subvalue" id="voteQuestion" style="margin-bottom:8px;color:#fff;font-size:13px;font-weight:900;">Type !predict [name] in chat</div>
-      <div class="vote-bars" id="voteBars">
-        <div class="subvalue">Votes appear once chat is live</div>
+  <div class="right">
+
+    <!-- Betting line -->
+    <div class="rsec">
+      <div class="rsec-hdr">📊 Tonight's Line · DraftKings · 8:10 PM</div>
+      <div class="line-teams">
+        <div class="lt nyk">
+          <div class="lt-name nyk">NY KNICKS</div>
+          <div class="lt-spread">+3.5</div>
+          <div class="lt-ml">ML +124 · (-112)</div>
+        </div>
+        <div class="lt cle">
+          <div class="lt-name cle">CLE CAVS</div>
+          <div class="lt-spread">-3.5</div>
+          <div class="lt-ml">ML -148 · (-108)</div>
+        </div>
       </div>
-      <div class="ou-row">
-        <div class="ou-box over"><div class="ou-label">!OVER</div><div class="ou-count" id="overCount">0</div></div>
-        <div class="ou-box under"><div class="ou-label">!UNDER</div><div class="ou-count" id="underCount">0</div></div>
+      <div class="line-total">
+        <span class="lt-lbl">TOTAL</span>
+        <span class="lt-val">O/U 215.5</span>
+        <span class="lt-odds">(-110 both)</span>
       </div>
-      <div class="subvalue" style="margin-top:6px;" id="totalVotes">0 total votes</div>
+      <div class="pace-sig push" id="paceSig">🎯 Pace tracker activates at tip-off</div>
     </div>
-    <div class="card">
-      <div class="label">Top Scorers (Estimated)</div>
-      <div id="topScorers">
-        <div class="scorer-row"><span>Awaiting data</span><span>--</span></div>
+
+    <!-- OU / Proj -->
+    <div class="rsec">
+      <div class="rsec-hdr">Over/Under Pace</div>
+      <div class="ou-boxes">
+        <div class="ou-box" style="background:var(--surface);border:1px solid var(--border);">
+          <div class="ou-num" id="ouCur" style="color:var(--text);">0</div>
+          <div class="ou-lbl">CURRENT</div>
+        </div>
+        <div class="ou-box" style="background:var(--surface);border:1px solid var(--border);">
+          <div class="ou-num" id="ouProj" style="color:var(--terminal);">—</div>
+          <div class="ou-lbl">PROJECTED</div>
+        </div>
       </div>
-      <div class="subvalue" style="margin-top:6px;">Tracked from play-by-play</div>
     </div>
-    <div class="card">
-      <div class="label">Last Updated</div>
-      <div class="value" id="updated">--</div>
-      <div class="subvalue">Refreshes every 3 seconds</div>
+
+    <!-- Votes -->
+    <div class="rsec" style="flex:1;">
+      <div class="rsec-hdr">🗳 Chat Predictions</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:10px;" id="voteQ">Who scores next?</div>
+      <div id="voteBars" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;">
+        <div style="font-size:13px;color:var(--muted);">Type !predict [name] in chat</div>
+      </div>
+      <div class="ou-boxes">
+        <div class="ou-box over"><div class="ou-num" id="overCt">0</div><div class="ou-lbl">!OVER</div></div>
+        <div class="ou-box under"><div class="ou-num" id="underCt">0</div><div class="ou-lbl">!UNDER</div></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);text-align:right;margin-top:6px;"><span id="voteTotal">0 votes</span> · <span id="updated">--</span></div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM STATS STRIP -->
+  <div class="bstats" style="grid-column:1/-1;">
+    <div class="bs">
+      <div class="bs-lbl">3PT Made · This Qtr</div>
+      <div class="bs-val" id="bs3" style="color:var(--terminal);">0</div>
+      <div class="bs-sub" id="bs3sub">NYK 0 · CLE 0</div>
+    </div>
+    <div class="bs">
+      <div class="bs-lbl">Turnovers · This Qtr</div>
+      <div class="bs-val" id="bsTO" style="color:var(--danger);">0</div>
+      <div class="bs-sub" id="bsTOsub">NYK 0 · CLE 0</div>
+    </div>
+    <div class="bs">
+      <div class="bs-lbl">Clutch Factor</div>
+      <div class="bs-val" id="bsClutch" style="color:#fff;">—</div>
+      <div class="bs-sub">Margin + time remaining</div>
+    </div>
+    <div class="bs">
+      <div class="bs-lbl">Last Updated</div>
+      <div class="bs-val" id="bsTime" style="color:var(--muted);font-size:18px;">--</div>
+      <div class="bs-sub">Every 3 seconds</div>
     </div>
   </div>
+
 </div>
 
+<!-- TICKER -->
 <div class="ticker">
-  <div class="ticker-track" id="ticker">
-    THE SPORTS TERMINAL • THUNDER vs SPURS • GAME 3 • LIVE PLAYOFF ANALYSIS • NO COMMENTARY • TYPE !predict !over !under IN CHAT TO VOTE
+  <div class="ticker-inner" id="ticker">
+    SPORTS TERMINAL · KNICKS vs CAVALIERS · GAME 4 · NYK LEADS SERIES 3-0 · CAN THE CAVS AVOID THE SWEEP? · LINE: NYK +3.5 · CLE -3.5 · O/U 215.5 · TYPE !predict !over !under IN CHAT TO VOTE · TIP-OFF 8:10 PM ET
   </div>
 </div>
 
 <script>
-const FEED_URL  = "http://127.0.0.1:8010/game-feed";
-const VOTES_URL = "http://127.0.0.1:8010/votes";
+const FEED="http://127.0.0.1:8010/game-feed";
+const VOTES="http://127.0.0.1:8010/votes";
+const OU_LINE=215.5;
 
-const AWAY_ABBR = "OKC";
-const HOME_ABBR = "SAS";
+let lastAway=null,lastHome=null,lastPlay=null;
+let recentScoring=[],playerPts={},playerTeam={},feedItems=[];
+let qtr3pt={a:0,h:0},qtrTO={a:0,h:0},curPeriod=0;
+let unanswered=0,unansweredTeam=null;
+let bruPts=0,bruThree=0,bruTO=0;
+let mitPts=0,mitThree=0,mitTO=0;
 
-let lastAwayScore = null, lastHomeScore = null, lastPlayText = null;
-let recentScoring = [], playerPoints = {}, playerTeam = {}, playFeedItems = [], graphHistory = [];
+const SHOTS={
+  Brunson:"https://cdn.nba.com/headshots/nba/latest/1040x760/1628384.png",
+  Towns:"https://cdn.nba.com/headshots/nba/latest/1040x760/1626157.png",
+  Anunoby:"https://cdn.nba.com/headshots/nba/latest/1040x760/1628996.png",
+  Bridges:"https://cdn.nba.com/headshots/nba/latest/1040x760/1628997.png",
+  Hart:"https://cdn.nba.com/headshots/nba/latest/1040x760/1628404.png",
+  Mitchell:"https://cdn.nba.com/headshots/nba/latest/1040x760/1628378.png",
+  Mobley:"https://cdn.nba.com/headshots/nba/latest/1040x760/1630596.png",
+  Garland:"https://cdn.nba.com/headshots/nba/latest/1040x760/1629636.png",
+  Allen:"https://cdn.nba.com/headshots/nba/latest/1040x760/1628386.png",
+  Strus:"https://cdn.nba.com/headshots/nba/latest/1040x760/1629622.png",
+};
+const NYK_PLAYERS=["Brunson","Towns","Anunoby","Bridges","Hart"];
+const CLE_PLAYERS=["Mitchell","Mobley","Garland","Allen","Strus"];
 
-const playerImages = {
-  // Thunder
-  "Gilgeous-Alexander": "https://cdn.nba.com/headshots/nba/latest/1040x760/1628983.png",
-  "Holmgren":           "https://cdn.nba.com/headshots/nba/latest/1040x760/1641726.png",
-  "Williams":           "https://cdn.nba.com/headshots/nba/latest/1040x760/1631114.png",
-  "Wallace":            "https://cdn.nba.com/headshots/nba/latest/1040x760/1641724.png",
-  "Dort":               "https://cdn.nba.com/headshots/nba/latest/1040x760/1629652.png",
-  // Spurs
-  "Wembanyama":         "https://cdn.nba.com/headshots/nba/latest/1040x760/1641705.png",
-  "Johnson":            "https://cdn.nba.com/headshots/nba/latest/1040x760/1631217.png",
-  "Castle":             "https://cdn.nba.com/headshots/nba/latest/1040x760/1642355.png",
-  "Jones":              "https://cdn.nba.com/headshots/nba/latest/1040x760/1629630.png",
-  "Vassell":            "https://cdn.nba.com/headshots/nba/latest/1040x760/1630170.png",
+// ── ROASTS ────────────────────────────────────────────────────────────────────
+const ROASTS={
+  TURNOVER_NYK:[
+    "Brunson gave that one away. Bold strategy.",
+    "NYK just donated to the CLE foundation.",
+    "Sir, this is a Wendy's.",
+    "Somebody check the Knicks' hands.",
+    "That pass went somewhere it wasn't invited.",
+  ],
+  TURNOVER_CLE:[
+    "Mitchell said, here, take it.",
+    "CLE just gifted NYK two points. How generous.",
+    "Cavs fans looking at each other right now.",
+    "That turnover was so bad it needs an apology.",
+    "Free basketball. Nobody asked for it.",
+  ],
+  THREE_NYK:[
+    "SPLASH. Pack it up Cleveland.",
+    "From downtown. Population: buckets.",
+    "That one left a mark.",
+    "Knicks woke up.",
+    "Ice in those veins.",
+  ],
+  THREE_CLE:[
+    "Mitchell said goodnight.",
+    "SPLASH. Garden's going quiet.",
+    "From way downtown. Disrespectful.",
+    "That was cold-blooded.",
+    "CLE cooking from deep.",
+  ],
+  BLOCK_NYK:[
+    "REJECTED. Return to sender.",
+    "Not in this building.",
+    "Blocked. With authority.",
+    "That attempt has been denied.",
+  ],
+  BLOCK_CLE:[
+    "Gone. Absolutely gone.",
+    "Mitchell said no, no, no.",
+    "Swatted into another dimension.",
+    "The audacity. Denied.",
+  ],
+  RUN_NYK:[
+    "CLE forgot how to score there.",
+    "NYK on a HEATER. Someone call 911.",
+    "The Knicks said it's our turn now.",
+    "Cleveland is having a moment. A bad one.",
+  ],
+  RUN_CLE:[
+    "NYK is on life support right now.",
+    "CLE turned it on. Knicks fans sweating.",
+    "Cavs run. The building is ALIVE.",
+    "Momentum shifted hard. Garden going quiet.",
+  ],
+  AND1:[
+    "AND ONE. The disrespect was intentional.",
+    "Got fouled AND scored. Absolutely unfair.",
+    "AND THE FOUL. Chaos.",
+    "That was personal and they got rewarded.",
+  ],
+  DUNK:[
+    "HAMMER. That rim felt that.",
+    "Somebody get a mop. That was NASTY.",
+    "Flushed it. With authority.",
+    "The building erupted.",
+  ],
 };
 
-const okcPlayers = ["Gilgeous-Alexander","Holmgren","Williams","Wallace","Dort"];
-const sasPlayers = ["Wembanyama","Johnson","Castle","Jones","Vassell"];
-
-const playTypeConfig = {
-  "3PT":      { label:"3PT",       cls:"score",    icon:"🎯" },
-  "DUNK":     { label:"DUNK",      cls:"score",    icon:"🔨" },
-  "ALLEY OOP":{ label:"ALLEY OOP", cls:"score",    icon:"🚀" },
-  "AND-1":    { label:"AND-1",     cls:"score",    icon:"🔥" },
-  "2PT":      { label:"2PT",       cls:"score",    icon:"🏀" },
-  "FT":       { label:"FT",        cls:"",         icon:"🎯" },
-  "BLOCK":    { label:"BLOCK",     cls:"defense",  icon:"✋" },
-  "STEAL":    { label:"STEAL",     cls:"defense",  icon:"💨" },
-  "TURNOVER": { label:"TURNOVER",  cls:"turnover", icon:"❌" },
-  "FOUL":     { label:"FOUL",      cls:"turnover", icon:"🚫" },
-  "TIMEOUT":  { label:"TIMEOUT",   cls:"",         icon:"⏱" },
-  "PLAY":     { label:"PLAY",      cls:"",         icon:"▶" },
-};
-
-function formatClock(raw) {
-  if (!raw || raw === "--") return "--";
-  // NBA sends "PT12M34.56S" format
-  const m = raw.match(/PT(\d+)M([\d.]+)S/);
-  if (!m) return raw;
-  const mins = m[1];
-  const secs = Math.floor(parseFloat(m[2])).toString().padStart(2, "0");
-  return `${mins}:${secs}`;
+function roast(pool){
+  if(!pool||!pool.length)return;
+  const line=pool[Math.floor(Math.random()*pool.length)];
+  const el=document.getElementById("roast");
+  el.innerHTML=line;
+  el.classList.add("on");
+  clearTimeout(window.roastT);
+  window.roastT=setTimeout(()=>el.classList.remove("on"),3500);
 }
 
-function setText(id, text) { const el=document.getElementById(id); if(el) el.innerText=text; }
-function getQuarterText(p) { if(p===0)return"Pregame"; if(p===1)return"1st"; if(p===2)return"2nd"; if(p===3)return"3rd"; if(p===4)return"4th"; return`OT${p-4}`; }
+function g(id){return document.getElementById(id);}
+function txt(id,v){const e=g(id);if(e)e.innerText=v;}
 
-function flashTeam(id) {
-  const el=document.getElementById(id); if(!el)return;
-  el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+function formatClock(raw,period){
+  if(!raw||raw==="")return period>=4?"FINAL":"--";
+  const m=raw.match(/PT(\d+)M([\d.]+)S/);
+  if(!m)return raw;
+  const mi=m[1],se=Math.floor(parseFloat(m[2])).toString().padStart(2,"0");
+  if(mi==="0"&&se==="00"&&period>=4)return"FINAL";
+  return`${mi}:${se}`;
+}
+function getQtr(p){if(p===0)return"PRE";if(p===1)return"1ST";if(p===2)return"2ND";if(p===3)return"3RD";if(p===4)return"4TH";return`OT${p-4}`;}
+function findPlayer(t){if(!t)return null;const tl=t.toLowerCase();return[...NYK_PLAYERS,...CLE_PLAYERS].find(n=>tl.includes(n.toLowerCase()))||null;}
+
+// Score overlay
+let ovT;
+function showOverlay(team,player,pts,pt,side){
+  const ov=g("scoreOverlay");
+  g("soBg").style.background=side==="away"?"rgba(0,40,110,.92)":"rgba(70,15,25,.92)";
+  txt("soTeam",team);txt("soPlayer",player||pt);
+  txt("soPts",`+${pts} PTS`);txt("soType",pt);
+  if(player&&SHOTS[player])g("soImg").src=SHOTS[player];
+  else g("soImg").removeAttribute("src");
+  ov.classList.add("show");
+  clearTimeout(ovT);ovT=setTimeout(()=>ov.classList.remove("show"),2200);
 }
 
-function pulseBall() {
-  const b=document.getElementById("ball");
-  b.classList.remove("pulse"); void b.offsetWidth; b.classList.add("pulse");
-}
-
-function setActionSide(side) {
-  const ball=document.getElementById("ball");
-  document.getElementById("glowAway").classList.remove("active");
-  document.getElementById("glowHome").classList.remove("active");
-  if(side==="away") {
-    ball.style.left="22%"; ball.style.top="50%";
-    document.getElementById("glowAway").classList.add("active");
-    setText("possessionLabel","OKC LIVE ACTION");
-  } else if(side==="home") {
-    ball.style.left="78%"; ball.style.top="50%";
-    document.getElementById("glowHome").classList.add("active");
-    setText("possessionLabel","SAS LIVE ACTION");
+// Diff bar
+function updateDiff(a,h){
+  const diff=a-h,max=20,pct=Math.min(Math.abs(diff)/max,1);
+  if(diff>0){
+    g("diffNYK").style.width=`${50+pct*45}%`;g("diffCLE").style.width="0";
+    txt("diffText",`NYK +${diff}`);
+  } else if(diff<0){
+    g("diffCLE").style.width=`${50+pct*45}%`;g("diffNYK").style.width="0";
+    txt("diffText",`CLE +${Math.abs(diff)}`);
   } else {
-    ball.style.left="50%"; ball.style.top="50%";
-    setText("possessionLabel","LIVE");
+    g("diffNYK").style.width="50%";g("diffCLE").style.width="50%";
+    txt("diffText","TIED");
   }
-  pulseBall();
 }
 
-function showPopup(text) {
-  const p=document.getElementById("scorePopup");
-  p.innerText=text; p.classList.remove("show"); void p.offsetWidth; p.classList.add("show");
+// Momentum
+function updateMom(){
+  let a=0,h=0;recentScoring.forEach(s=>{if(s.team==="away")a+=s.points;else h+=s.points;});
+  const diff=a-h,fill=g("momFill");
+  let w=50+diff*5;w=Math.max(5,Math.min(95,w));fill.style.width=w+"%";
+  if(diff>0){txt("momVal","🔥 NYK");fill.style.background="linear-gradient(90deg,var(--nyk),var(--terminal))";}
+  else if(diff<0){txt("momVal","🔥 CLE");fill.style.background="linear-gradient(90deg,var(--cle-light),#ff8c42)";}
+  else txt("momVal","Neutral");
 }
 
-function findPlayer(text) {
-  if(!text)return null;
-  const t=text.toLowerCase();
-  return [...okcPlayers,...sasPlayers].find(n=>t.includes(n.toLowerCase()))||null;
+// Run
+function updateRun(team){
+  if(team===unansweredTeam) unanswered++;
+  else{unanswered=1;unansweredTeam=team;}
+  const box=g("runBox"),num=g("runNum"),lbl=g("runLbl");
+  const isNYK=unansweredTeam==="away";
+  num.textContent=unanswered;
+  lbl.textContent=`${isNYK?"NYK":"CLE"} UNANSWERED`;
+  if(unanswered>=6){
+    box.className=`run-box ${isNYK?"nyk":"cle"}`;
+    roast(isNYK?ROASTS.RUN_NYK:ROASTS.RUN_CLE);
+    document.body.className=isNYK?"nyk-run":"cle-run";
+    setTimeout(()=>document.body.className="",4000);
+  } else {
+    box.className="run-box";
+  }
 }
 
-function updateHeadshot(player) {
-  const img=document.getElementById("headshot");
-  if(player&&playerImages[player]) img.src=playerImages[player];
-  else img.removeAttribute("src");
+// Clutch
+function updateClutch(period,a,h){
+  const margin=Math.abs(a-h),isLive=a+h>0;
+  let f=0;
+  if(isLive&&period>=3){const q=period>=4?1:.6;f=Math.round(Math.max(0,1-margin/15)*q*100);}
+  txt("bsClutch",f>=80?"🚨 EXTREME":f>=60?"⚡ HIGH":f>=30?`${f}%`:"—");
+  txt("liveBadge",(period>=4&&margin<=5&&isLive)?"CLUTCH":"LIVE");
 }
 
-function addPlayFeedItem(playType, description, side) {
-  const cfg=playTypeConfig[playType]||playTypeConfig["PLAY"];
-  playFeedItems.unshift({cfg,description,side});
-  if(playFeedItems.length>4) playFeedItems.pop();
-  document.getElementById("playFeed").innerHTML=playFeedItems.map(item=>`
-    <div class="play-row ${item.side}">
-      <span class="play-tag ${item.cfg.cls}">${item.cfg.label}</span>
-      <span class="play-desc">${item.description}</span>
-    </div>`).join("");
+// OU pace
+function updateOU(a,h,period,clock){
+  const total=a+h;txt("ouCur",total);
+  let mins=0;
+  if(period>0){mins=(period-1)*12;const m=clock&&clock.match(/(\d+):(\d+)/);if(m)mins+=12-parseInt(m[1]);}
+  if(mins<2){txt("ouProj","—");return;}
+  const pace=Math.round((total/mins)*48);txt("ouProj",pace);
+  const sig=g("paceSig");
+  if(pace>OU_LINE+6){sig.className="pace-sig over";sig.textContent=`📈 OVER PACE — Proj ${pace} vs ${OU_LINE}`;}
+  else if(pace<OU_LINE-6){sig.className="pace-sig under";sig.textContent=`📉 UNDER PACE — Proj ${pace} vs ${OU_LINE}`;}
+  else{sig.className="pace-sig push";sig.textContent=`⚖️ ON THE LINE — Proj ${pace} near ${OU_LINE}`;}
 }
 
-function inferPoints(text,diff) {
-  if(!text)return diff||2;
-  const t=text.toLowerCase();
-  if(t.includes("3pt")||t.includes("three"))return 3;
-  if(t.includes("free throw"))return 1;
-  if(diff>0)return diff;
-  return 2;
+// Matchup verdict
+function updateMatchup(){
+  txt("bruPts",bruPts);txt("mitPts",mitPts);
+  txt("bruStats",`${bruThree} 3PM · ${bruTO} TO`);
+  txt("mitStats",`${mitThree} 3PM · ${mitTO} TO`);
+  const v=g("matchupVerdict");
+  if(bruPts===0&&mitPts===0){v.textContent="Game hasn't started yet. Stay tuned.";return;}
+  const diff=bruPts-mitPts;
+  if(diff>8) v.textContent=`Brunson winning this fight comfortably. Mitchell needs to wake up.`;
+  else if(diff>3) v.textContent=`Brunson has the edge. Mitchell will respond.`;
+  else if(diff<-8) v.textContent=`Mitchell is COOKING. Brunson needs to answer.`;
+  else if(diff<-3) v.textContent=`Mitchell ahead. Brunson not going away quietly.`;
+  else v.textContent=`Dead even. This one's personal.`;
 }
 
-function recordScore(team,points,text) {
-  recentScoring.push({team,points});
-  if(recentScoring.length>8)recentScoring.shift();
-  const player=findPlayer(text);
-  if(player){ playerPoints[player]=(playerPoints[player]||0)+points; playerTeam[player]=team; }
-  updateMomentum(); updateTopScorers();
-}
-
-function updateMomentum() {
-  let a=0,h=0;
-  recentScoring.forEach(s=>{if(s.team==="away")a+=s.points;else h+=s.points;});
-  const diff=a-h;
-  const fill=document.getElementById("momentumFill");
-  let w=50+diff*5; w=Math.max(8,Math.min(92,w));
-  fill.style.width=w+"%";
-  if(diff>0){ setText("momentumTitle","🔥 OKC Run"); setText("momentumSub",`OKC ${a}-${h} in last 8 plays`); fill.style.background="linear-gradient(90deg,var(--thunder),var(--terminal))"; }
-  else if(diff<0){ setText("momentumTitle","🔥 SAS Run"); setText("momentumSub",`SAS ${h}-${a} in last 8 plays`); fill.style.background="linear-gradient(90deg,var(--spurs),#888)"; }
-  else{ setText("momentumTitle","Even"); setText("momentumSub",`OKC ${a} - SAS ${h} recent scoring`); }
-}
-
-function updateTopScorers() {
-  const leaders=Object.entries(playerPoints).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const el=document.getElementById("topScorers");
-  if(!leaders.length){ el.innerHTML=`<div class="scorer-row"><span>Awaiting data</span><span>--</span></div>`; return; }
-  el.innerHTML=leaders.map(([name,pts])=>{
-    const team=playerTeam[name]==="away"?"okc":"sas";
-    const abbr=team==="okc"?"OKC":"SAS";
-    return`<div class="scorer-row"><span>${name}<span class="scorer-team ${team}">${abbr}</span></span><span>${pts}</span></div>`;
+// Top scorers
+function updateScorers(){
+  const leaders=Object.entries(playerPts).sort((a,b)=>b[1]-a[1]).slice(0,4);
+  const el=g("topScorers");
+  if(!leaders.length){el.innerHTML=`<div style="font-size:13px;color:var(--muted);">Tracking from live feed</div>`;return;}
+  el.innerHTML=leaders.map(([n,p])=>{
+    const col=playerTeam[n]==="away"?"var(--nyk-light)":"var(--cle-light)";
+    const abbr=playerTeam[n]==="away"?"NYK":"CLE";
+    return`<div class="scorer-row">
+      <span class="sr-name">${n} <span class="sr-team" style="color:${col};">${abbr}</span></span>
+      <span class="sr-pts">${p}</span>
+    </div>`;
   }).join("");
 }
 
-function updateClutchFactor(period,awayScore,homeScore) {
-  const margin=Math.abs(awayScore-homeScore);
-  const isLive=awayScore+homeScore>0;
-  let factor=0;
-  if(isLive&&period>=3){ const qp=period>=4?1:0.6; const cl=Math.max(0,1-margin/15); factor=Math.round(cl*qp*100); }
-  document.getElementById("clutchFill").style.width=factor+"%";
-  if(factor>=80){ setText("clutchLabel",`🚨 EXTREME (${factor}%)`); setText("clutchSub","One-possession game, late clock"); }
-  else if(factor>=50){ setText("clutchLabel",`⚡ HIGH (${factor}%)`); setText("clutchSub","Close game in second half"); }
-  else if(factor>0){ setText("clutchLabel",`${factor}%`); setText("clutchSub","Clutch factor rises late in close games"); }
-  else{ setText("clutchLabel","—"); setText("clutchSub","Activates in second half"); }
-  const late=period>=4; const close=margin<=5;
-  if(late&&close&&isLive){ document.body.classList.add("clutch"); setText("liveBadge","CLUTCH"); }
-  else{ document.body.classList.remove("clutch"); setText("liveBadge",isLive?"LIVE":"PREGAME"); }
+// Play feed
+const PCFG={
+  "3PT":{l:"3PT",c:"score"},"DUNK":{l:"DUNK",c:"score"},
+  "ALLEY OOP":{l:"ALLEY OOP",c:"score"},"AND-1":{l:"AND-1",c:"score"},
+  "2PT":{l:"2PT",c:"score"},"FT":{l:"FT",c:"default"},
+  "BLOCK":{l:"BLOCK",c:"defense"},"STEAL":{l:"STEAL",c:"defense"},
+  "TURNOVER":{l:"TO",c:"turnover"},"FOUL":{l:"FOUL",c:"turnover"},
+  "TIMEOUT":{l:"T/O",c:"default"},"PLAY":{l:"PLAY",c:"default"},
+};
+function addFeed(pt,desc,side){
+  const cfg=PCFG[pt]||PCFG["PLAY"];
+  feedItems.unshift({cfg,desc,side});
+  if(feedItems.length>4)feedItems.pop();
+  g("feedItems").innerHTML=feedItems.map(it=>
+    `<div class="feed-item ${it.side||""}">
+      <span class="fi-tag ${it.cfg.c}">${it.cfg.l}</span>
+      <div class="fi-desc">${it.desc}</div>
+    </div>`
+  ).join("");
 }
 
-function updateGraph(away, home) {
-  graphHistory.push({ away, home });
-  if (graphHistory.length > 80) graphHistory.shift();
-  const n      = graphHistory.length;
-  const diffs  = graphHistory.map(d => d.away - d.home);
-  const maxAbs = Math.max(...diffs.map(Math.abs), 1);
-  const MID    = 45;
-  const RANGE  = 38;
-  const stepX  = 400 / Math.max(n - 1, 1);
-
-  const pts = graphHistory.map((d, i) => ({
-    x: i * stepX,
-    y: MID - ((d.away - d.home) / maxAbs) * RANGE,
-    diff: d.away - d.home
-  }));
-
-  const pointStr = pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
-  document.getElementById("diffLine").setAttribute("points", pointStr);
-
-  const polyAbove = pts.map(p => `${p.x.toFixed(1)},${Math.min(p.y, MID).toFixed(1)}`).join(" ");
-  document.getElementById("diffFillOKC").setAttribute("points",
-    `0,${MID} ` + polyAbove + ` ${pts[pts.length-1].x.toFixed(1)},${MID}`);
-
-  const polyBelow = pts.map(p => `${p.x.toFixed(1)},${Math.max(p.y, MID).toFixed(1)}`).join(" ");
-  document.getElementById("diffFillSAS").setAttribute("points",
-    `0,${MID} ` + polyBelow + ` ${pts[pts.length-1].x.toFixed(1)},${MID}`);
-
-  const last = pts[pts.length - 1];
-  const dot  = document.getElementById("diffDot");
-  const lbl  = document.getElementById("diffLabel");
-  dot.setAttribute("cx", last.x.toFixed(1));
-  dot.setAttribute("cy", last.y.toFixed(1));
-  dot.setAttribute("fill", last.diff > 0 ? "#007AC1" : last.diff < 0 ? "#C0C0C0" : "white");
-  dot.setAttribute("filter", last.diff > 0 ? "drop-shadow(0 0 5px #007AC1)" : last.diff < 0 ? "drop-shadow(0 0 5px #C0C0C0)" : "drop-shadow(0 0 4px white)");
-
-  const labelY = last.diff >= 0 ? last.y - 7 : last.y + 14;
-  lbl.setAttribute("x", Math.min(Math.max(last.x, 20), 375).toFixed(1));
-  lbl.setAttribute("y", labelY.toFixed(1));
-  lbl.setAttribute("fill", last.diff > 0 ? "#64c8ff" : last.diff < 0 ? "#c0c0c0" : "white");
-  lbl.textContent = last.diff === 0 ? "TIED" : last.diff > 0 ? `OKC +${last.diff}` : `SAS +${Math.abs(last.diff)}`;
+// Votes
+async function updateVotes(){
+  try{
+    const r=await fetch(VOTES,{cache:"no-store"});const d=await r.json();
+    txt("voteQ",d.question||"Who scores next?");
+    const players=Object.entries(d.players||{}).sort((a,b)=>b[1]-a[1]).slice(0,4);
+    const total=d.totalVotes||0;
+    const bars=g("voteBars");
+    if(!players.length){bars.innerHTML=`<div style="font-size:13px;color:var(--muted);">No votes yet</div>`;}
+    else{bars.innerHTML=players.map(([n,c])=>{const pct=total>0?Math.round(c/total*100):0;
+      return`<div class="vbar-row"><div class="vbar-top"><span>${n}</span><span>${c} (${pct}%)</span></div>
+      <div class="vbar-track"><div class="vbar-fill" style="width:${pct}%"></div></div></div>`;}).join("");}
+    txt("overCt",d.overUnder.over);txt("underCt",d.overUnder.under);
+    txt("voteTotal",`${d.totalVotes+d.totalOU} votes`);
+  }catch(e){}
 }
 
-async function updateVotes() {
-  try {
-    const r=await fetch(VOTES_URL,{cache:"no-store"});
-    const data=await r.json();
-    setText("voteQuestion",data.question||"Who scores next?");
-    const players=Object.entries(data.players||{}).sort((a,b)=>b[1]-a[1]).slice(0,5);
-    const total=data.totalVotes||0;
-    const bars=document.getElementById("voteBars");
-    if(!players.length){ bars.innerHTML=`<div class="subvalue">No votes yet — type !predict [name] in chat</div>`; }
-    else{ bars.innerHTML=players.map(([name,count])=>{ const pct=total>0?Math.round(count/total*100):0; return`<div class="vote-row"><div class="vote-name"><span>${name}</span><span>${count} (${pct}%)</span></div><div class="vote-track"><div class="vote-fill" style="width:${pct}%"></div></div></div>`; }).join(""); }
-    setText("overCount",data.overUnder.over);
-    setText("underCount",data.overUnder.under);
-    setText("totalVotes",`${data.totalVotes+data.totalOU} total votes this round`);
-  } catch(e){}
-}
-
-async function update() {
+// Main update
+async function update(){
   const now=new Date().toLocaleTimeString();
-  try {
-    const res=await fetch(FEED_URL,{cache:"no-store"});
-    const data=await res.json();
-    const period=Number(data.period||0);
-    const qText=getQuarterText(period);
-    const clockText=formatClock(data.clock);
-    const awayScore=Number(data.awayScore||0);
-    const homeScore=Number(data.homeScore||0);
-    const total=awayScore+homeScore;
+  txt("updated",now);txt("bsTime",now);
+  try{
+    const res=await fetch(FEED,{cache:"no-store"});const d=await res.json();
+    const period=Number(d.period||0),away=Number(d.awayScore||0),home=Number(d.homeScore||0);
+    const clock=formatClock(d.clock,period),qtr=getQtr(period),total=away+home;
 
-    setText("scoreA",awayScore); setText("scoreB",homeScore);
-    setText("total",total); setText("quarter",qText);
-    setText("clock",clockText); setText("updated",now);
-    if(total>0) setText("ouResult",`${total} combined pts — voting active`);
+    if(period!==curPeriod&&period>0){qtr3pt={a:0,h:0};qtrTO={a:0,h:0};curPeriod=period;}
 
-    updateClutchFactor(period,awayScore,homeScore);
-    updateGraph(awayScore,homeScore);
+    txt("scoreA",away);txt("scoreB",home);txt("quarter",qtr);txt("clock",clock);txt("total",total);
+    txt("ouCur",total);
+    updateDiff(away,home);updateClutch(period,away,home);updateOU(away,home,period,clock);updateMom();
 
-    if(lastAwayScore!==null&&awayScore>lastAwayScore){
-      const diff=awayScore-lastAwayScore;
-      flashTeam("teamABox"); setActionSide("away");
-      showPopup(`OKC +${diff}`);
-      recordScore("away",inferPoints(data.lastPlay,diff),data.lastPlay);
-    }
-    if(lastHomeScore!==null&&homeScore>lastHomeScore){
-      const diff=homeScore-lastHomeScore;
-      flashTeam("teamBBox"); setActionSide("home");
-      showPopup(`SAS +${diff}`);
-      recordScore("home",inferPoints(data.lastPlay,diff),data.lastPlay);
-    }
-
-    if(data.actionTeam) setActionSide(data.actionTeam);
-
-    if(data.lastPlay&&data.lastPlay!==lastPlayText){
-      const player=findPlayer(data.lastPlay);
-      const playType=data.playType||"PLAY";
-      const side=data.actionTeam==="away"?"okc":data.actionTeam==="home"?"sas":"";
-      setText("player",player||"Latest Play");
-      setText("playerStat",data.lastPlay);
-      setText("playTypeBadge",(playTypeConfig[playType]?.icon||"")+" "+playType);
-      updateHeadshot(player);
-      addPlayFeedItem(playType,data.lastPlay,side);
-      if(period!==0) showPopup(data.lastPlay);
-      lastPlayText=data.lastPlay;
+    // NYK scores
+    if(lastAway!==null&&away>lastAway){
+      const diff=away-lastAway,pt=d.playType||"2PT";
+      const pts=pt==="3PT"?3:pt==="FT"?1:diff;
+      const pl=findPlayer(d.lastPlay);
+      g("scoreA").classList.add("bump");setTimeout(()=>g("scoreA").classList.remove("bump"),400);
+      showOverlay("NEW YORK KNICKS",pl,diff,pt,"away");
+      recentScoring.push({team:"away",points:pts});if(recentScoring.length>8)recentScoring.shift();
+      if(pl){playerPts[pl]=(playerPts[pl]||0)+pts;playerTeam[pl]="away";}
+      if(pt==="3PT"){qtr3pt.a++;if(pl==="Brunson")bruThree++;}
+      if(pl==="Brunson")bruPts+=pts;
+      updateRun("away");updateScorers();updateMom();updateMatchup();
+      // Roast
+      if(pt==="3PT")roast(ROASTS.THREE_NYK);
+      else if(pt==="DUNK")roast(ROASTS.DUNK);
+      else if(pt==="AND-1")roast(ROASTS.AND1);
     }
 
-    setText("status",period===0?"Pregame":"In Progress");
-    setText("statusSub",period===0?"Waiting for tipoff":"Live NBA feed connected");
-    setText("ticker",`THE SPORTS TERMINAL • OKC ${awayScore} – SAS ${homeScore} • ${qText} ${clockText} • ${document.getElementById("momentumTitle").innerText} • CLUTCH: ${document.getElementById("clutchLabel").innerText} • TYPE !predict [player] !over !under IN CHAT • UPDATED ${now}`);
+    // CLE scores
+    if(lastHome!==null&&home>lastHome){
+      const diff=home-lastHome,pt=d.playType||"2PT";
+      const pts=pt==="3PT"?3:pt==="FT"?1:diff;
+      const pl=findPlayer(d.lastPlay);
+      g("scoreB").classList.add("bump");setTimeout(()=>g("scoreB").classList.remove("bump"),400);
+      showOverlay("CLEVELAND CAVALIERS",pl,diff,pt,"home");
+      recentScoring.push({team:"home",points:pts});if(recentScoring.length>8)recentScoring.shift();
+      if(pl){playerPts[pl]=(playerPts[pl]||0)+pts;playerTeam[pl]="home";}
+      if(pt==="3PT"){qtr3pt.h++;if(pl==="Mitchell")mitThree++;}
+      if(pl==="Mitchell")mitPts+=pts;
+      updateRun("home");updateScorers();updateMom();updateMatchup();
+      if(pt==="3PT")roast(ROASTS.THREE_CLE);
+      else if(pt==="DUNK")roast(ROASTS.DUNK);
+      else if(pt==="AND-1")roast(ROASTS.AND1);
+    }
 
-    lastAwayScore=awayScore; lastHomeScore=homeScore;
-  } catch(e) {
-    setText("liveBadge","WAITING");
-    setText("status","Feed Offline");
-    setText("statusSub","Check backend server");
-  }
+    // Turnovers + blocks
+    if(d.lastPlay&&d.playType==="TURNOVER"){
+      const pl=findPlayer(d.lastPlay);
+      if(d.actionTeam==="away"){
+        qtrTO.a++;
+        if(pl==="Brunson")bruTO++;
+        roast(ROASTS.TURNOVER_NYK);
+      } else if(d.actionTeam==="home"){
+        qtrTO.h++;
+        if(pl==="Mitchell")mitTO++;
+        roast(ROASTS.TURNOVER_CLE);
+      }
+      updateMatchup();
+    }
+    if(d.playType==="BLOCK"){
+      roast(d.actionTeam==="away"?ROASTS.BLOCK_NYK:ROASTS.BLOCK_CLE);
+    }
+
+    // Bottom strip
+    txt("bs3",qtr3pt.a+qtr3pt.h);txt("bs3sub",`NYK ${qtr3pt.a} · CLE ${qtr3pt.h}`);
+    txt("bsTO",qtrTO.a+qtrTO.h);txt("bsTOsub",`NYK ${qtrTO.a} · CLE ${qtrTO.h}`);
+
+    // Play feed
+    if(d.lastPlay&&d.lastPlay!==lastPlay){
+      const pl=findPlayer(d.lastPlay);const pt=d.playType||"PLAY";
+      const side=d.actionTeam==="away"?"nyk":d.actionTeam==="home"?"cle":"";
+      addFeed(pt,d.lastPlay,side);
+      txt("spName",pl||"—");
+      if(pl&&SHOTS[pl])g("spImg").src=SHOTS[pl];
+      lastPlay=d.lastPlay;
+    }
+
+    txt("ticker",`SPORTS TERMINAL · NYK ${away} – CLE ${home} · ${qtr} ${clock} · BRUNSON ${bruPts} PTS vs MITCHELL ${mitPts} PTS · LINE: NYK +3.5 · CLE -3.5 · O/U 215.5 · PROJ: ${g("ouProj").innerText} PTS · ${g("momVal").innerText.replace("🔥","").trim()} MOMENTUM · !predict !over !under IN CHAT · ${now}`);
+    lastAway=away;lastHome=home;
+  }catch(e){txt("liveBadge","OFFLINE");}
 }
 
 update();
